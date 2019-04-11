@@ -6,6 +6,7 @@ import AboutMe from '../components/AboutMe';
 import FruitsBox from '../components/FruitsBox';
 import ShopList from '../components/ShopList';
 import Know from '../components/Know.vue';
+import Community from '../components/Community';
 
 Vue.use(Router);
 
@@ -44,6 +45,11 @@ export default new Router({
           path:'know',
           name:'know',
           component:Know
+        },
+        {
+          path:'community',
+          name:'community',
+          component:Community
         }
       ]
     },

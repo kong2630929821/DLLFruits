@@ -7,8 +7,8 @@
         <router-link to="/index/indexMain" tag="li">首页</router-link>
         <router-link to="/index/shoplist" tag="li">鲜果展示</router-link>
         <router-link to="/index/fruitsBox" tag="li">鲜果礼盒</router-link>
-        <router-link to="/index/Know" tag="li">鲜果知识</router-link>
-        <router-link to="/aboutMe" tag="li">鲜果社区</router-link>
+        <router-link to="/index/know" tag="li">鲜果知识</router-link>
+        <router-link to="/index/community" tag="li">鲜果社区</router-link>
         <router-link to="/index/aboutMe" tag="li">关于我们</router-link>
       </ul>
       <ol>

@@ -2,14 +2,48 @@
 <template>
   <div>
     <div class="search">
-        <el-autocomplete
-        v-model="state4"
-        :fetch-suggestions="querySearchAsync"
-        placeholder="请输入内容"
-        @select="handleSelect"
-        ></el-autocomplete>
-    </div>  
-  </div>
+        <div class="search-1">
+            <el-autocomplete
+            v-model="state4"
+            :fetch-suggestions="querySearchAsync"
+            placeholder="请输入内容"
+            @select="handleSelect"
+          ></el-autocomplete>
+        </div>
+        <div class="searchs">搜索</div>
+    </div>
+    <div class="know-box">
+        <div class="know-box-left">
+          <img src="../../static/image/shop/5.jpg" alt="">
+        </div>
+        <div class="know-box-right">
+            <p class="right-title">薰衣草</p>
+            <p class="right-content">薰衣草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草薰衣草</p>
+        </div>
+    </div>
+      <div class="content-box">
+        <div class="hostory">历史相关</div>
+        <p class="p1">草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草</p>
+        <p class="p1">草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草</p>
+        <div class="hostory">形态特征</div>
+        <p class="p1">衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣衣草薰衣草薰衣草薰衣草薰衣草薰衣草草衣草薰衣</p>
+        <div class="hostory">分布</div>
+        <p class="p1">草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰草薰衣草草衣草薰衣衣草薰</p>
+      </div>
+    <div class="bottom">
+      <p class="title">ConstNewObject：欢迎您来到果思旗舰店</p>
+      <ul class="clearfix">
+        <li><span class="el-icon-location"></span> 四川省成都市</li>
+        <li><span class="fa fa-phone"></span> 17774645192</li>
+        <li>
+          <img src="../../static/image/me.png" alt="">
+        </li>
+        <li><span class="fa fa-wechat"></span> 2630929821</li>
+        <li class="last"><span class="fa fa-envelope-o"></span> 2630929821@qq.com</li>
+      </ul>
+      <p class="b-foot">Copyright &copy; 2019 沪ICP备12042163号</p>
+    </div>
+    </div>
 </template>
 
 <script>
@@ -17,23 +51,7 @@ export default {
 name:'Know',
   data () {
     return {
-        restaurants: [],
-        state4: '',
-        timeout:  null
-    };
-  },
-
-  components: {},
-
-  computed: {},
-
-  mounted: {
-    this.restaurants = this.loadAll();
-  },
-
-  methods: {
-            loadAll() {
-        return [
+        restaurants:[
           { "value": "三全鲜食（北新泾店）", "address": "长宁区新渔路144号" },
           { "value": "Hot honey 首尔炸鸡（仙霞路）", "address": "上海市长宁区淞虹路661号" },
           { "value": "新旺角茶餐厅", "address": "上海市普陀区真北路988号创邑金沙谷6号楼113" },
@@ -82,8 +100,12 @@ name:'Know',
           { "value": "(小杨生煎)西郊百联餐厅", "address": "长宁区仙霞西路88号百联2楼" },
           { "value": "阳阳麻辣烫", "address": "天山西路389号" },
           { "value": "南拳妈妈龙虾盖浇饭", "address": "普陀区金沙江路1699号鑫乐惠美食广场A13" }
-        ];
-      },
+        ],
+        state4: '',
+        timeout:  null
+    };
+  },
+  methods: {
       querySearchAsync(queryString, cb) {
         var restaurants = this.restaurants;
         var results = queryString ? restaurants.filter(this.createStateFilter(queryString)) : restaurants;
@@ -111,7 +133,103 @@ name:'Know',
     padding: 0;
 }
 .search{
-    width: 400px;
+    width: 278px;
     height: 40px;
+    margin: 40px auto;
+    display: flex;
+  .searchs{
+    width: 78px;
+    height: 40px;
+    background: #485b6a;
+    color: white;
+    text-align: center;
+    line-height: 40px;
+    font-size: 14px;
+    margin-left: -2px;
+  }
+}
+  .know-box{
+    width: 769px;
+    height: 340px;
+    margin: 0 auto;
+    display: flex;
+    .know-box-left{
+      width: 439px;
+      height: 340px;
+      background: url("../../static/image/know.png")no-repeat;
+      img{
+        width: 426px;
+        height: 324px;
+        cursor: pointer;
+      }
+    }
+    .know-box-right{
+      width: 334px;
+      .right-title{
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 40px auto 20px;
+      }
+      .right-content{
+        font-size: 14px;
+        text-indent: 2rem;
+        padding: 0 30px;
+      }
+    }
+  }
+  .content-box{
+    width: 769px;
+    margin: 20px auto 40px ;
+    overflow: hidden;
+    .hostory{
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .p1{
+      font-size: 14px;
+      text-indent: 2rem;
+      margin-top: 10px;
+      line-height: 21px;
+    }
+  }
+.bottom{
+  width: 100%;
+  height: 200px;
+  background: #485b6a;
+  font-size: 12px;
+  overflow: hidden;
+  .title{
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+  }
+  ul{
+    width: 662px;
+    margin: 20px auto 0;
+    .last{
+      width: 150px;
+    }
+    li{
+      float: left;
+      width: 100px;
+      height: 70px;
+      margin-left: 20px;
+      color: white;
+      line-height: 70px;
+      font-size: 12px;
+      img{
+        width: 99%;
+        height: 99%;
+      }
+    }
+  }
+  .b-foot{
+    text-align: center;
+    color: white;
+    margin-top: 20px;
+    font-size: 12px;
+  }
 }
 </style>
