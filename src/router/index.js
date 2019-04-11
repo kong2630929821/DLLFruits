@@ -1,15 +1,55 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import Index from '../components/Index';
+import IndexMain from '../components/IndexMain';
+import AboutMe from '../components/AboutMe';
+import FruitsBox from '../components/FruitsBox';
+import ShopList from '../components/ShopList';
+import Know from '../components/Know.vue';
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      redirect:'/index/indexMain'
+    },
+    {
+      path: '/index',
+      name: 'index',
+      component: Index,
+      children:[
+        {
+          path:'indexMain',
+          name:'indexMain',
+          component:IndexMain
+        },
+        {
+          path:'aboutMe',
+          name:'aboutMe',
+          component:AboutMe
+        },
+        {
+          path:'fruitsBox',
+          name:'fruitsBox',
+          component:FruitsBox
+        },
+        {
+          path:'shoplist',
+          name:'shoplist',
+          component:ShopList
+        },
+        {
+          path:'know',
+          name:'know',
+          component:Know
+        }
+      ]
+    },
+    {
+      path:'*',
+      redirect: '/index/aboutMe'
     }
   ]
 })
