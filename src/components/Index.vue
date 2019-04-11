@@ -7,7 +7,7 @@
         <router-link to="/index/indexMain" tag="li">首页</router-link>
         <router-link to="/index/shoplist" tag="li">鲜果展示</router-link>
         <router-link to="/index/fruitsBox" tag="li">鲜果礼盒</router-link>
-        <router-link to="/aboutMe" tag="li">鲜果知识</router-link>
+        <router-link to="/index/Know" tag="li">鲜果知识</router-link>
         <router-link to="/aboutMe" tag="li">鲜果社区</router-link>
         <router-link to="/index/aboutMe" tag="li">关于我们</router-link>
       </ul>
@@ -48,7 +48,7 @@
                         v-model="input10"
                         clearable>
                       </el-input>
-                      <div class="isOk" v-show="checked">验证</div>
+                      <div class="isOk" v-show="checked" @click="verification">{{countdown}}</div>
                     </div>
                     <div class="phoneCode">
                       <el-input
@@ -104,16 +104,20 @@
             type:'text',
             checked:true,
             isReg:false,
-            loginTitle:'点击注册'
+            loginTitle:'点击注册',
+            countdown:'验证'
           }
         },
       methods:{
+        //点击展开登入
         isLogin(){
           this.login=true;
         },
+        //关闭登入界面
         closeLogin(){
           this.login=false;
         },
+        //切换登入模式
         check(){
           if(this.checked){
             this.title='账号登录';
@@ -131,6 +135,7 @@
               this.checked = !this.checked;
           }
         },
+        //切换注册
         loginTitles(){
          if(!this.isReg){
            this.title='注册';
@@ -147,6 +152,20 @@
            this.title='账号登录';
            this.btnNames = '登录';
          }
+        },
+        //验证码倒计时
+        verification(){
+          if((typeof this.countdown)=='string'){
+            this.countdown = 60;
+            clearInterval(timer);
+            const timer=setInterval(()=>{
+              this.countdown--;
+              if(this.countdown<0){
+                clearInterval(timer);
+                this.countdown = '验证'
+              }
+            },1000)
+          }
         }
       }
     }

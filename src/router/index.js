@@ -5,6 +5,7 @@ import IndexMain from '../components/IndexMain';
 import AboutMe from '../components/AboutMe';
 import FruitsBox from '../components/FruitsBox';
 import ShopList from '../components/ShopList';
+import Know from '../components/Know.vue';
 
 Vue.use(Router);
 
@@ -38,6 +39,11 @@ export default new Router({
           path:'shoplist',
           name:'shoplist',
           component:ShopList
+        },
+        {
+          path:'know',
+          name:'know',
+          component:Know
         }
       ]
     },

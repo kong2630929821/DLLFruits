@@ -12,12 +12,7 @@
       </div>
       <div class="list">
         <ul>
-          <li class="active">进口水果</li>
-          <li>国内水果</li>
-          <li>乳品糕点</li>
-          <li>方便速食</li>
-          <li>坚果专区</li>
-          <li>干货珍菌</li>
+          <li v-for="(item,index) in items" :key="index" :class="{'active':i==index}" @click="checkType(index)">{{item}}</li>
         </ul>
         <div class="shop-list">
           <ol>
@@ -72,6 +67,8 @@
         name: "ShopList",
         data(){
           return{
+            i:0,
+            items:['进口水果','国内水果','乳品糕点','方便速食','坚果专区','干货珍菌'],
             arr:['../../static/image/banner/banner1.jpg','../../static/image/banner/banner2.jpg','../../static/image/banner/banner3.jpg','../../static/image/banner/banner12.jpg','../../static/image/banner/banner5.jpg','../../static/image/banner/banner6.jpg'],
             shopList:[
               {
@@ -140,6 +137,11 @@
               }
               ]
           }
+        },
+        methods:{
+          checkType(index){
+             this.i = index;
+          }
         }
     }
 </script>
@@ -193,6 +195,7 @@
           line-height: 28px;
           margin-top: 10px;
           color: #3c586d;
+          cursor: pointer;
         }
       }
       .shop-list{
