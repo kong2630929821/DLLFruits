@@ -18,7 +18,7 @@
               <img src="../../static/image/qq/img.png" alt="">
               <p>图片</p>
             </div>
-            <input :value="input" class="f1" name="files" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" multiple>
+            <input @change="fileChange" class="f1" name="files" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" multiple>
             <button>发布</button>
           </div>
           <!--表情-->
@@ -121,7 +121,13 @@
             <div class="close1" @click="closeImg">×</div>
             <em>最多选择9张图片上传</em>
             <ul class="icon3 clearfix">
-              <div class="push"><p>+</p><input type="file" class="f2" name="files" accept="image/jpg,image/jpeg,image/png,image/gif" multiple></div>
+              <li v-for="(v,i) in src" :key="i">
+                <img :src="v" alt="">
+                <div>
+                  <p @click="currentImg(i)">×</p>
+                </div>
+              </li>
+              <div @change="f2Change" class="push" v-show="addImg"><p>+</p><input type="file" class="f2" name="files" accept="image/jpg,image/jpeg,image/png,image/gif" multiple></div>
             </ul>
           </div>
         </div>
@@ -141,7 +147,9 @@
           return{
             isShow:false,
             imgShow:false,
-            input:''
+            input:[],
+            src:[],
+            addImg:true
           }
         },
       methods:{
@@ -156,7 +164,59 @@
         },
         closeImg(){
           this.imgShow = false;
+        },
+        //添加图片
+        fileChange(){
+          const f1 = document.querySelector('.f1').files;
+          this.src = [];
+          const that = this;
+          this.input.push(...f1);
+          this.input.forEach((v,i)=>{
+            if(i<9){
+              const oFReader = new FileReader(); /*创建一个文件阅读器*/
+              const file = v;
+              oFReader.readAsDataURL(file);
+              oFReader.onloadend = function(ev){
+                  /*或者目标文件的解析结果*/
+                  const src1 = ev.target.result;
+                  that.src.push(src1);
+                  if(that.src.length>=9){
+                    that.addImg = false;
+                  }
+            }
+            }
+          });
+          console.log(this.src);
+        },
+        //第二次添加图片
+        f2Change(){
+          const f1 = document.querySelector('.f2').files;
+          this.src = [];
+          const that = this;
+          this.input.push(...f1);
+          this.input.forEach((v,i)=>{
+            if(i<9){
+              const oFReader = new FileReader(); /*创建一个文件阅读器*/
+              const file = v;
+              oFReader.readAsDataURL(file);
+              oFReader.onloadend = function(ev){
+                  /*或者目标文件的解析结果*/
+                  const src1 = ev.target.result;
+                  that.src.push(src1);
+                  if(that.src.length>=9){
+                    that.addImg = false;
+                  }
+            }
+            }
+          });
+          console.log(this.src);
+        },
+        currentImg(index){
+          console.log(index);
         }
+      },
+      computed:{
+        
       }
     }
 </script>
