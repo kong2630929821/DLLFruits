@@ -22,9 +22,10 @@
         <li>
           <span class="fa fa-list-ul"></span>
         </li>
-        <li @click="isLogin">
-          <span class="fa fa-user-o"></span>
-          <b></b>
+        <li @click="isLogin" class="usersInfo">
+          <span v-show="!successLogin" class="fa fa-user-o"></span>
+          <div v-show="successLogin" class="userImg" style="background: url(../../static/image/qq/2018new_dahaqian_org.png)"></div>
+          <b>{{user.u_name?user.u_name:'我的账户'}}</b>
         </li>
       </ol>
     </div>
@@ -45,7 +46,7 @@
                     <div class="phone">
                       <el-input
                         :placeholder="placeholder"
-                        v-model="input10"
+                        v-model="inputPhone"
                         clearable>
                       </el-input>
                       <div class="isOk" v-show="checked" @click="verification">{{countdown}}</div>
@@ -53,28 +54,28 @@
                     <div class="phoneCode">
                       <el-input
                         :placeholder="placeholderCode"
-                        v-model="input11"
+                        v-model="inputCode"
                         :type="type"
                         clearable>
                       </el-input>
                     </div>
                   <div class="phoneCode" v-show="isReg">
                     <el-input
-                      placeholder="密码"
-                      v-model="input12"
-                      type="password"
+                      placeholder="账号"
+                      v-model="inputAccount"
+                      type="text"
                       clearable>
                     </el-input>
                   </div>
                   <div class="phoneCode" v-show="isReg">
                     <el-input
-                      placeholder="确认密码"
-                      v-model="input13"
+                      placeholder="密码"
+                      v-model="inputPassword"
                       type="password"
                       clearable>
                     </el-input>
                   </div>
-                  <div class="loginEnter">{{btnNames}}</div>
+                  <div class="loginEnter" @click="loginPhone">{{btnNames}}</div>
                   <p class="regs">还没有果思账号<b @click="loginTitles">{{loginTitle}}</b></p>
                   <div class="loginEnters" @click="check">{{btnName}}</div>
                 </div>
@@ -91,10 +92,10 @@
         data(){
           return{
             input:'',
-            input10: '',
-            input11:'',
-            input12:'',
-            input13:'',
+            inputPhone: '2630929821',
+            inputCode:'123456',
+            inputAccount:'',
+            inputPassword:'',
             login:false,
             title:'手机快捷登录',
             placeholder:'手机号码',
@@ -105,10 +106,24 @@
             checked:true,
             isReg:false,
             loginTitle:'点击注册',
-            countdown:'验证'
+            countdown:'验证',
+            successLogin:false,
+            user:{}
           }
         },
       methods:{
+        open3(msg) {
+          this.$message({
+            message: msg,
+            type: 'warning'
+          });
+        },
+        open2(msg) {
+          this.$message({
+            message: msg,
+            type: 'success'
+          });
+        },
         //点击展开登入
         isLogin(){
           this.login=true;
@@ -143,7 +158,8 @@
            this.placeholder='手机号码';
            this.placeholderCode='验证码';
            this.loginTitle='点击登录';
-           this.btnNames='注册',
+           this.checked =true;
+           this.btnNames='注册';
            this.isReg=true;
          }else{
            this.isReg=false;
@@ -153,9 +169,16 @@
            this.btnNames = '登录';
          }
         },
-        //验证码倒计时
+        //获取验证码
         verification(){
           if((typeof this.countdown)=='string'){
+            this.$axios({
+              method:'post',
+              url:'/api/getCode',
+              data:{
+                phone:this.inputPhone
+              }
+            });
             this.countdown = 60;
             clearInterval(timer);
             const timer=setInterval(()=>{
@@ -164,8 +187,71 @@
                 clearInterval(timer);
                 this.countdown = '验证'
               }
-            },1000)
+            },1000);
           }
+        },
+        //登入
+        loginPhone(){
+          //注册
+         if(this.isReg){
+            this.$axios({
+              method:'post',
+              url:'/api/register',
+              data:{
+                phone:this.inputPhone,
+                code:this.inputCode,
+                account:this.inputAccount,
+                pass:this.inputPassword
+              }
+            }).then((res)=>{
+              if(res.data.error){
+                this.open2('恭喜您注册果思账号成功，请登入！');
+                this.isReg=false;
+                this.loginTitle='点击注册';
+                this.checked=false;
+                this.title='账号登录';
+                this.btnNames = '登录';
+                this.btnName = '手机快捷登录'
+              }
+            });
+         }else if(this.checked){
+           //手机验证码登入
+           this.$axios({
+             method: 'post',
+             url:'/api/loginPhone',
+             data:{
+               phone:this.inputPhone,
+               code:this.inputCode
+             }
+           }).then((res)=>{
+             if(res.data.error){
+               alert('登入成功');
+             }
+           });
+         }else{
+           //账号登入
+            if(this.inputPhone!==''&&this.inputCode!==''){
+                this.$axios({
+                  method:'post',
+                  url:'/api/accountLogin',
+                  data:{
+                    account:this.inputPhone,
+                    pass:this.inputCode
+                  }
+                }).then((res)=>{
+                  console.log(res);
+                  if(res.data.error){
+                    this.open2('登入成功，欢迎进入果思！');
+                    this.successLogin=true;
+                    this.user=res.data.data[0];
+                    this.login = false;
+                  }else{
+                    this.open3('账号或密码错误，请重新登入！');
+                    this.inputCode='';
+                  }
+                })
+            }
+         }
         }
       }
     }
@@ -176,6 +262,21 @@
       margin: 0;
       padding: 0;
       font-size: 14px;
+  }
+  .usersInfo{
+    display: flex;
+    b{
+      margin-left: 10px;
+    }
+    span{
+      margin-top: 16px;
+    }
+  }
+  .userImg{
+    width: 35px;
+    height: 35px;
+    margin-top: 6px;
+    border-radius: 50%;
   }
   .clearfix:after{
     content: '';

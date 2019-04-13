@@ -7,6 +7,7 @@ import FruitsBox from '../components/FruitsBox';
 import ShopList from '../components/ShopList';
 import Know from '../components/Know.vue';
 import Community from '../components/Community';
+import Myself from '../components/Myself';
 
 Vue.use(Router);
 
@@ -14,7 +15,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect:'/index/indexMain'
+      // redirect:'/index/indexMain'
+      redirect:'/index/myself'
     },
     {
       path: '/index',
@@ -50,7 +52,12 @@ export default new Router({
           path:'community',
           name:'community',
           component:Community
-        }
+        },
+        {
+          path:'myself',
+          name:'myself',
+          component:Myself
+        },
       ]
     },
     {
