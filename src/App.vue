@@ -33,4 +33,28 @@ export default {
     opacity: 1;
     box-shadow: 4px 0 85px 6px rgba(0,0,0,0.4);
   }
+  .distpicker-address-wrapper select{
+    font-size: 14px;
+  }
+  /*去掉input的数字按钮*/
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  input[type="number"]{
+    -moz-appearance: textfield;
+  }
+  .inputnum{
+    width: 60px;
+    display: inline-block;
+  }
+  .el-input-number{
+    width: 160px;
+  }
+  .el-table .cell{
+    text-align: center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis
+  }
 </style>
