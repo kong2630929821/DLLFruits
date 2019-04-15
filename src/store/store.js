@@ -11,7 +11,8 @@ const store = new Vuex.Store({
       phone:'17774645192',
       mail:'2630929821@qq.com',
       sex:'男',
-      img:''
+      img:'',
+      money:5000
     },
     address:[
       {
@@ -22,7 +23,8 @@ const store = new Vuex.Store({
         phone:'17774645192',
         province:'四川省',
         city:'成都市',
-        area:'双流区'
+        area:'双流区',
+        detailed:'长城馨苑'
       }
     ]
   },
@@ -32,13 +34,16 @@ const store = new Vuex.Store({
       state.userInfo=msg;
     },
     //修改地址
-    changeAddress(state,msg,index){
-      debugger
-      state.address.splice(index,1,msg);
+    changeAddress(state,msg){
+      state.address.splice(msg.index,1,msg.content);
     },
     //添加地址
     addAddress(state,msg){
       state.address.push(msg);
+    },
+    //删除地址
+    removeAddress(state,msg){
+      state.address=msg;
     }
   }
 });

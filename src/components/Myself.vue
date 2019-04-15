@@ -2,57 +2,159 @@
     <div class="myself">
       <div class="pay" v-show="pay">
           <div class="pay-top">
+           <div class="closePay">
+             <div class="modal-content" @click="closePay">×</div>
+           </div>
             <div class="pay-top-1">
               <el-steps :active="active" finish-status="success">
                 <el-step title="收货地址"></el-step>
                 <el-step title="生成订单"></el-step>
-                <el-step title="付款"></el-step>
+                <el-step title="正在付款"></el-step>
               </el-steps>
             </div>
-            <div class="pay-top-2">填写收货地址</div>
-            <div class="address">
-              <ul>
-                <li v-for="(v,index) in address" :key="index">
-                  <el-radio v-model="radio" :label="v.province+' '+v.city+' '+v.name+' '+v.phone"></el-radio>
-                  <span @click="changeAdd(index)"> &nbsp;修改</span>
-                  <span> | </span>
-                  <span @click="removeAdd(index)"> 删除</span>
-                </li>
-                <div class="addAddress" @click="addAddress">
-                  <p>+新填地址</p>
+            <div v-show="active==1">
+              <div class="pay-top-2">填写收货地址</div>
+              <div class="address">
+                <ul>
+                  <li v-for="(v,index) in address" :key="index">
+                    <el-radio v-model="radio" :label="index">{{v.province}}&nbsp;{{v.city}}&nbsp;{{v.name}}&nbsp;{{v.phone}}&nbsp;</el-radio>
+                    <span @click="changeAdd(index)"> &nbsp;修改</span>
+                    <span> | </span>
+                    <span @click="removeAdd(index)"> 删除</span>
+                  </li>
+                  <div class="addAddress" @click="addAddress">
+                    <p>+新填地址</p>
+                  </div>
+                </ul>
+              </div>
+              <div class="add" v-show="isAddress">
+                <ul>
+                  <li>
+                    <el-input
+                      placeholder="姓名"
+                      v-model="aAddress.name"
+                      clearable>
+                    </el-input>
+                  </li>
+                  <li>
+                    <el-input
+                      placeholder="联系电话"
+                      v-model="aAddress.phone"
+                      clearable>
+                    </el-input>
+                  </li>
+                  <li>
+                    <el-input
+                      placeholder="邮箱"
+                      v-model="aAddress.mail"
+                      clearable>
+                    </el-input>
+                  </li>
+                </ul>
+                <div class="userInfoAdd">
+                  <v-distpicker :province="aAddress.province" :city="aAddress.city" :area="aAddress.area" style="display: flex;justify-content: center;" @selected="onSelected"></v-distpicker>
+                  <div class="detailed">
+                    <el-input
+                      placeholder="详细地址"
+                      v-model="aAddress.detailed"
+                      clearable>
+                    </el-input>
+                  </div>
                 </div>
-              </ul>
-            </div>
-            <div class="add" v-show="isAddress">
-              <ul>
-                <li>
-                  <el-input
-                    placeholder="姓名"
-                    v-model="aAddress.name"
-                    clearable>
-                  </el-input>
-                </li>
-                <li>
-                  <el-input
-                    placeholder="联系电话"
-                    v-model="aAddress.phone"
-                    clearable>
-                  </el-input>
-                </li>
-                <li>
-                  <el-input
-                    placeholder="邮箱"
-                    v-model="aAddress.mail"
-                    clearable>
-                  </el-input>
-                </li>
-              </ul>
-              <div class="userInfoAdd">
-                <v-distpicker :province="aAddress.province" :city="aAddress.city" :area="aAddress.area" style="display: flex;justify-content: center;" @selected="onSelected"></v-distpicker>
-                <div class="pushAddr" @click="pushAddAddress"><el-button type="primary">提交地址</el-button></div>
               </div>
             </div>
-            <div class="next"><el-button type="success" @click="next">下一步</el-button></div>
+            <div class="type2" v-show="active==2">
+              <div class="pay-top-2">请核对信息</div>
+              <div class="orderInfo">
+                <el-table
+                  :data="shoppingList"
+                  style="width: 100%"
+                  max-height="390"
+                  >
+                  <el-table-column
+                    fixed
+                    prop="time"
+                    label="日期"
+                    width="150">
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="price"
+                    label="单价"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="sum"
+                    label="数量"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="金额">
+                    <template slot-scope="props">
+                      <span style="color: #f40;font-weight:bold;">￥{{ props.row.price*props.row.sum}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="收货人"
+                    width="120">
+                    <template slot-scope="props">
+                      <span>{{address[radio].name}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="手机号码"
+                    width="120">
+                    <template slot-scope="props">
+                      <span>{{address[radio].phone}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="地址"
+                    width="360">
+                    <template slot-scope="props">
+                      <span>{{address[radio].province}}&nbsp;{{address[radio].city}}&nbsp;{{address[radio].area}}&nbsp;{{address[radio].detailed}}</span>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+              <div class="isOkOrder">
+                <p class="sum">共选择 <b>{{shoppingList.length}}</b> 件商品</p>
+                <p class="sumMoney">共计：<b>{{total}}</b> 元</p>
+              </div>
+            </div>
+            <div v-show="active==3">
+              <div class="pay-top-2">付款</div>
+              <div class="payCode">
+                  <div class="showCode">
+                    <p class="p1" v-show="userInfo.money<total">余额不足，请充值！</p>
+                    <img v-show="userInfo.money<total" src="../../static/image/me.png" alt="">
+                    <p class="p2" v-show="userInfo.money>total">请输入登入密码</p>
+                    <div v-show="userInfo.money>total">
+                      <el-input
+                        placeholder="密码"
+                        type="password"
+                        v-model="inputPayPass"
+                        clearable>
+                      </el-input>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <div class="bottomBox">
+              <div class="bottomBtn">
+                <div class="prep">
+                  <el-button type="success" @click="prep">上一步</el-button>
+                </div>
+                <div v-show="isAddress&&active==1" class="pushAddr" @click="pushAddAddress"><el-button type="primary">提交地址</el-button></div>
+                <div class="next">
+                  <el-button type="success" @click="next">下一步</el-button>
+                </div>
+              </div>
+            </div>
           </div>
       </div>
       <div class="my-top">
@@ -77,6 +179,7 @@
       <div class="my-content">
         <div class="content-top"></div>
         <div class="setPass">
+          <!--设置头像-->
           <div class="set-right" v-show="changeHead">
             <div class="div1">
               <img :src="userInfo.img" alt="" class="img1">
@@ -89,6 +192,7 @@
               <el-button type="primary" round id="btn2">确认上传</el-button>
             </el-row>
           </div>
+          <!--设置资料-->
           <div class="set-left" v-show="0==i&&!changeHead">
               <div class="input1">
                 <p>昵称：</p>
@@ -165,7 +269,8 @@
               <el-button type="primary" round @click="revise">修改资料</el-button>
             </el-row>
           </div>
-          <div class="shoppingCart">
+          <!--购物车-->
+          <div class="shoppingCart" v-show="1==i">
             <el-table
               :data="shoppingCart"
               @selection-change="handleSelectionChange">
@@ -197,7 +302,10 @@
                     <el-form-item label="商品单价：">
                       <span>{{ props.row.price }}元</span>
                     </el-form-item>
-                    <el-form-item label="商品信息：">
+                    <el-form-item label="日期：">
+                      <span>{{ props.row.time }}</span>
+                    </el-form-item>
+                    <el-form-item label="商品图片：">
                       <img style="width: 150px;height: 150px" src="../../static/image/shop/2.jpg" alt="">
                     </el-form-item>
                   </el-form>
@@ -208,8 +316,8 @@
                 width="55">
               </el-table-column>
               <el-table-column
-                label="商品 ID"
-                prop="id">
+                label="日期"
+                prop="time">
               </el-table-column>
               <el-table-column
                 label="商品信息">
@@ -236,7 +344,7 @@
               <el-table-column
                 label="金额">
                 <template slot-scope="props">
-                  ￥{{ props.row.price*props.row.sum}}
+                  <span style="color: #f40;font-weight:bold;">￥{{ props.row.price*props.row.sum}}</span>
                 </template>
               </el-table-column>
               <el-table-column
@@ -257,6 +365,19 @@
           </div>
         </div>
       </div>
+      <div class="bottom">
+        <p class="title">ConstNewObject：欢迎您来到果思旗舰店</p>
+        <ul class="clearfix">
+          <li><span class="el-icon-location"></span> 四川省成都市</li>
+          <li><span class="fa fa-phone"></span> 17774645192</li>
+          <li>
+            <img src="../../static/image/me.png" alt="">
+          </li>
+          <li><span class="fa fa-wechat"></span> 2630929821</li>
+          <li class="last"><span class="fa fa-envelope-o"></span> 2630929821@qq.com</li>
+        </ul>
+        <p class="b-foot">Copyright &copy; 2019 沪ICP备12042163号</p>
+      </div>
     </div>
 </template>
 
@@ -275,7 +396,7 @@
             inputOkPass:'',//确认密码
             inputCode:'',//验证码
             countdown:'验证',
-            radio: '',
+            radio:0,//选择的收货地址
             edit:true,//编辑资料
             inputNum:1,//商品数量
             shoppingCart: [{
@@ -286,6 +407,7 @@
               address: '上海市普陀区真北路',
               shop: '王小虎夫妻店',
               shopId: '10333',
+              time:'2019-4-17',
               price:120,
               sum:1
             }, {
@@ -296,6 +418,7 @@
               address: '上海市普陀区真北路',
               shop: '王小虎夫妻店',
               shopId: '10333',
+              time:'2019-4-15',
               price:120,
               sum:1
             }, {
@@ -306,6 +429,7 @@
               address: '上海市普陀区真北路',
               shop: '王小虎夫妻店',
               shopId: '10333',
+              time:'2019-4-15',
               price:120,
               sum:2
             }, {
@@ -316,12 +440,13 @@
               address: '上海市普陀区真北路',
               shop: '王小虎夫妻店',
               shopId: '10333',
+              time:'2019-4-16',
               price:10,
               sum:2
             }],
             shoppingList:[],//选中的商品列表
             total:0,//合计
-            active: 0,
+            active: 1,//步骤条
             isAddress:false,//添加的地址显示
             address:[],//我的收货地址
             aAddress:{
@@ -332,10 +457,12 @@
               phone:'',
               province:'',
               city:'',
-              area:''
+              area:'',
+              detailed:''
             },//编辑的收获地址
             pay:false,//添加收货地址展开
             isChangeAdd:-1,//是否修改地址
+            inputPayPass:'',//支付密码
           }
         },
       mounted(){
@@ -436,6 +563,10 @@
             type: 'success'
           });
         },
+        //错误弹框
+        error(msg){
+          this.$message.error(msg);
+        },
         //未选择图片时弹框
         open6() {
           this.$message.error('您还没有选择图片，怎么会酱紫！');
@@ -533,21 +664,29 @@
         },
         //添加地址显示
         addAddress(){
-          this.aAddress={};
-          this.isAddress=true;
+          if(this.address.length>=3){
+            this.error('收货地址最多是3个，请重新输入！');
+          }else{
+            this.aAddress={};
+            this.isAddress=true;
+          }
         },
         //三级联动获取详细地址值
         onSelected(data) {
-          this.aAddress.province = data.province.value
-          this.aAddress.city = data.city.value
-          this.aAddress.area = data.area.value
+          this.aAddress.province = data.province.value;
+          this.aAddress.city = data.city.value;
+          this.aAddress.area = data.area.value;
         },
         //提交添加地址
         pushAddAddress(){
           if(this.isChangeAdd!=-1){
             this.aAddress.id=this.address[this.isChangeAdd].id;
             this.aAddress.u_id=this.address[this.isChangeAdd].u_id;
-            this.$store.commit('changeAddress',this.aAddress,this.isChangeAdd);
+            const data={
+              index:this.isChangeAdd,
+              content:this.aAddress
+            };
+            this.$store.commit('changeAddress',data);
             this.isAddress=false;
             console.log(this.$store.state.address);
           }else{
@@ -567,11 +706,49 @@
         },
         //删除地址
         removeAdd(index){
-
+          this.address.splice(index,1);
+          this.$store.commit('removeAddress',this.address);
+          console.log(this.$store.state.address);
         },
         //下一步
         next(){
-           console.log(this.aAddress);
+          switch (this.active) {
+            case 1:
+              if(!this.address[this.radio]){
+                this.error('您还未选择收货地址！');
+                return;
+              }
+              break;
+            case 2:
+              break;
+            case 3:
+              const loading = this.$loading({
+                lock: true,
+                text: 'Loading',
+                spinner: 'el-icon-loading',
+                background: 'rgba(0, 0, 0, 0.7)'
+              });
+              setTimeout(() => {
+                loading.close();
+                this.set('支付成功，请注意查收！');
+              }, 2000);
+              this.pay=false;
+              this.active=1;
+              return;
+              break;
+          }
+          this.active++;
+           console.log(this.radio);
+        },
+        //上一步
+        prep(){
+          if(this.active!=1){
+            this.active--;
+          }
+        },
+        //关闭付款
+        closePay(){
+          this.pay=false;
         }
       }
     }
@@ -582,6 +759,82 @@
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .bottomBox{
+    width: 100%;
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+  }
+  .payCode{
+    width: 350px;
+    height: 350px;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .showCode{
+      width: 200px;
+      height: 200px;
+      img{
+        width: 100%;
+        height: 100%;
+      }
+      .p1{
+        color: red;
+        font-weight: bold;
+        text-align: center;
+        padding: 0 0 10px 0;
+      }
+      .p2{
+        font-weight: bold;
+        text-align: center;
+        padding: 0 0 80px 0;
+      }
+    }
+  }
+  .closePay{
+    height: 20px;
+    position: relative;
+  }
+  .modal-content{
+    width: 40px;
+    height: 20px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+  .isOkOrder{
+    display: flex;
+    .sum{
+      height: 40px;
+      line-height: 40px;
+      flex: 7;
+      margin-left: 60px;
+      font-weight: bold;
+      b{
+        color: #f40;
+      }
+    }
+    .sumMoney{
+      height: 40px;
+      line-height: 40px;
+      flex: 2;
+      font-weight: bold;
+      b{
+        color: #f40;
+      }
+    }
+  }
+  .detailed{
+    width: 336px;
+    margin: 20px auto 0;
   }
   .pay{
     width: 100vw;
@@ -621,7 +874,7 @@
               }
             }
              .addAddress{
-              padding: 0 0 10px 0;
+              padding: 10px 0 10px 0;
               p{
                 margin-left: 40px;
                 color: #d2aaa6;
@@ -645,26 +898,34 @@
           text-align: center;
           margin: 20px auto;
           font-size: 16px;
-          .pushAddr{
-            width: 100px;
-            height: 40px;
-            margin: 40px auto;
-            .el-button--primary{
-              width: 100%;
-              height: 100%;
-            }
-          }
         }
       }
-      .next{
-        width: 100px;
-        height: 40px;
-        position: absolute;
-        bottom: 20px;
-        right: 40px;
-        .el-button--success{
-          width: 100%;
-          height: 100%;
+      .bottomBtn{
+        display: flex;
+        justify-content: space-around;
+        .pushAddr{
+          width: 100px;
+          height: 40px;
+          .el-button--primary{
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .next{
+          width: 100px;
+          height: 40px;
+          .el-button--success{
+            width: 100%;
+            height: 100%;
+          }
+        }
+        .prep{
+          width: 100px;
+          height: 40px;
+          .el-button--success{
+            width: 100%;
+            height: 100%;
+          }
         }
       }
     }
@@ -673,7 +934,7 @@
     overflow: auto;
   }
   .settlement{
-    margin-top: 20px;
+    margin: 20px auto;
     width: 100%;
     height: 40px;
     display: flex;
@@ -746,6 +1007,7 @@
     height: 260px;
     margin: 0 auto;
     display: flex;
+    padding: 20px 0 20px 0;
     justify-content: space-around;
     flex-wrap: wrap;
     align-content: space-around;
@@ -870,7 +1132,6 @@
   }
   .my-content{
     width: 1349px;
-    height: 600px;
     background: #eeeded;
     overflow: hidden;
     .content-top{
@@ -911,6 +1172,44 @@
           margin: 100px 20px ;
         }
       }
+    }
+  }
+  .bottom{
+    width: 100%;
+    height: 200px;
+    background: #485b6a;
+    font-size: 12px;
+    overflow: hidden;
+    .title{
+      color: white;
+      text-align: center;
+      margin-top: 20px;
+    }
+    ul{
+      width: 662px;
+      margin: 20px auto 0;
+      .last{
+        width: 150px;
+      }
+      li{
+        float: left;
+        width: 100px;
+        height: 70px;
+        margin-left: 20px;
+        color: white;
+        line-height: 70px;
+        font-size: 12px;
+        img{
+          width: 99%;
+          height: 99%;
+        }
+      }
+    }
+    .b-foot{
+      text-align: center;
+      color: white;
+      margin-top: 120px;
+      font-size: 12px;
     }
   }
 </style>

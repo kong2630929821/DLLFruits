@@ -60,4 +60,11 @@ export default {
    .userInfoAddr{
       display: flex;
    }
+  .el-step__title{
+    margin-left: -14px;
+    font-size: 14px;
+  }
+  .is-process{
+    font-weight: normal;
+  }
 </style>
