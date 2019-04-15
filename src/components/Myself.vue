@@ -1,6 +1,6 @@
 <template>
     <div class="myself">
-      <div class="pay" v-show="0">
+      <div class="pay" v-show="pay">
           <div class="pay-top">
             <div class="pay-top-1">
               <el-steps :active="active" finish-status="success">
@@ -12,43 +12,43 @@
             <div class="pay-top-2">填写收货地址</div>
             <div class="address">
               <ul>
-                <li>
-                  <el-radio v-model="radio" :label="address.province+' '+address.city+' '+address.name+' '+address.phone"></el-radio>
-                  <span>修改</span>
+                <li v-for="(v,index) in address" :key="index">
+                  <el-radio v-model="radio" :label="v.province+' '+v.city+' '+v.name+' '+v.phone"></el-radio>
+                  <span @click="changeAdd(index)"> &nbsp;修改</span>
                   <span> | </span>
-                  <span>删除</span>
+                  <span @click="removeAdd(index)"> 删除</span>
                 </li>
-              </ul>
-              <div class="addAddress" @click="addAddress">
+                <div class="addAddress" @click="addAddress">
                   <p>+新填地址</p>
-              </div>
+                </div>
+              </ul>
             </div>
             <div class="add" v-show="isAddress">
               <ul>
                 <li>
                   <el-input
                     placeholder="姓名"
-                    v-model="address.name"
+                    v-model="aAddress.name"
                     clearable>
                   </el-input>
                 </li>
                 <li>
                   <el-input
                     placeholder="联系电话"
-                    v-model="address.phone"
+                    v-model="aAddress.phone"
                     clearable>
                   </el-input>
                 </li>
                 <li>
                   <el-input
                     placeholder="邮箱"
-                    v-model="address.mail"
+                    v-model="aAddress.mail"
                     clearable>
                   </el-input>
                 </li>
               </ul>
               <div class="userInfoAdd">
-                <v-distpicker :province="address.province" :city="address.city" :area="address.area"></v-distpicker>
+                <v-distpicker :province="aAddress.province" :city="aAddress.city" :area="aAddress.area" style="display: flex;justify-content: center;" @selected="onSelected"></v-distpicker>
                 <div class="pushAddr" @click="pushAddAddress"><el-button type="primary">提交地址</el-button></div>
               </div>
             </div>
@@ -323,7 +323,19 @@
             total:0,//合计
             active: 0,
             isAddress:false,//添加的地址显示
-            address:{}
+            address:[],//我的收货地址
+            aAddress:{
+              id:'',
+              u_id:'',
+              name:'',
+              mail:'',
+              phone:'',
+              province:'',
+              city:'',
+              area:''
+            },//编辑的收获地址
+            pay:false,//添加收货地址展开
+            isChangeAdd:-1,//是否修改地址
           }
         },
       mounted(){
@@ -505,7 +517,7 @@
         },
         //结算
         totalMoney(){
-
+          this.pay=true;
         },
         //商品数量变化
         handleChange(index,row){
@@ -521,11 +533,45 @@
         },
         //添加地址显示
         addAddress(){
+          this.aAddress={};
           this.isAddress=true;
+        },
+        //三级联动获取详细地址值
+        onSelected(data) {
+          this.aAddress.province = data.province.value
+          this.aAddress.city = data.city.value
+          this.aAddress.area = data.area.value
         },
         //提交添加地址
         pushAddAddress(){
+          if(this.isChangeAdd!=-1){
+            this.aAddress.id=this.address[this.isChangeAdd].id;
+            this.aAddress.u_id=this.address[this.isChangeAdd].u_id;
+            this.$store.commit('changeAddress',this.aAddress,this.isChangeAdd);
             this.isAddress=false;
+            console.log(this.$store.state.address);
+          }else{
+            this.aAddress.id=2;
+            this.aAddress.u_id=2;
+            this.$store.commit('addAddress',this.aAddress);
+            this.isAddress=false;
+            console.log(this.$store.state.address);
+          } 
+        },
+        //修改地址
+        changeAdd(index){
+          this.isChangeAdd=index;
+          const data=JSON.stringify(this.address[index]);
+          this.aAddress = JSON.parse(data);
+          this.isAddress=true;
+        },
+        //删除地址
+        removeAdd(index){
+
+        },
+        //下一步
+        next(){
+           console.log(this.aAddress);
         }
       }
     }
@@ -563,24 +609,26 @@
         margin-top: 40px;
       }
       .address{
-        .addAddress{
-          height: 65px;
-          background: #f2f2f2;
-          margin: 20px auto;
-          ul{
+        margin: 20px auto;;
+         background: #f2f2f2;
+         ul{
             li{
+              padding: 10px 0;
+              margin-left: 40px;
               span{
-
+                color: #d2aaa6;
+                cursor: pointer;
               }
             }
+             .addAddress{
+              padding: 0 0 10px 0;
+              p{
+                margin-left: 40px;
+                color: #d2aaa6;
+                cursor: pointer;
+              }
+              }
           }
-          p{
-            margin-left: 40px;
-            line-height: 65px;
-            color: #d2aaa6;
-            cursor: pointer;
-          }
-        }
       }
       .add{
         width: 500px;

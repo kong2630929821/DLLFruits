@@ -13,24 +13,32 @@ const store = new Vuex.Store({
       sex:'男',
       img:''
     },
-    address:{
-      id:1,
-      u_id:1,
-      name:'君莫笑',
-      mail:'2630929821@qq.com',
-      phone:'17774645192',
-      province:'四川省',
-      city:'成都市',
-      area:'双流区'
-    }
+    address:[
+      {
+        id:1,
+        u_id:1,
+        name:'君莫笑',
+        mail:'2630929821@qq.com',
+        phone:'17774645192',
+        province:'四川省',
+        city:'成都市',
+        area:'双流区'
+      }
+    ]
   },
   mutations:{
     //修改个人信息
     changeInfo(state,msg){
       state.userInfo=msg;
     },
-    changeAddress(state,msg){
-      state.address=msg;
+    //修改地址
+    changeAddress(state,msg,index){
+      debugger
+      state.address.splice(index,1,msg);
+    },
+    //添加地址
+    addAddress(state,msg){
+      state.address.push(msg);
     }
   }
 });

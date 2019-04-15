@@ -57,4 +57,7 @@ export default {
     overflow:hidden;
     text-overflow:ellipsis
   }
+   .userInfoAddr{
+      display: flex;
+   }
 </style>
