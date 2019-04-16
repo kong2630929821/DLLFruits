@@ -431,6 +431,130 @@
                 <div class="btn" @click="pedingPay"><el-button type="primary">结算</el-button></div>
               </div>
           </div>
+          <!-- 待收货 -->
+          <div class="receipt" v-show="3==i">
+              <el-table
+                  :data="receiptList"
+                  style="width: 100%"
+                  max-height="390"
+                  >
+                  <el-table-column
+                    fixed
+                    prop="time"
+                    label="日期"
+                    width="150">
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="price"
+                    label="单价"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="sum"
+                    label="数量"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="金额">
+                    <template slot-scope="props">
+                      <span style="color: #f40;font-weight:bold;">￥{{ props.row.price*props.row.sum}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="收货人"
+                    prop="receiptName"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="手机号码"
+                    prop="receiptPhone"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="地址"
+                    width="360">
+                    <template slot-scope="props">
+                      <span>{{props.row.receiptProvince}}&nbsp;{{props.row.receiptCity}}&nbsp;{{props.row.receiptArea}}&nbsp;{{props.row.receiptDetailed}}</span>
+                    </template>
+                  </el-table-column>
+                   <el-table-column
+                    label="操作" width="180">
+                    <template slot-scope="scope">
+                      <el-button
+                        size="medium"
+                        type="success"
+                        @click="signing(scope.$index,scope.row)">签收</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+          </div>
+          <!-- 评价 -->
+          <div class="assess" v-show="4==i">
+              <el-table
+                  :data="assessList"
+                  style="width: 100%"
+                  max-height="390"
+                  >
+                  <el-table-column
+                    fixed
+                    prop="time"
+                    label="日期"
+                    width="150">
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="price"
+                    label="单价"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="sum"
+                    label="数量"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="金额">
+                    <template slot-scope="props">
+                      <span style="color: #f40;font-weight:bold;">￥{{ props.row.price*props.row.sum}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="收货人"
+                    prop="receiptName"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="手机号码"
+                    prop="receiptPhone"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="地址"
+                    width="360">
+                    <template slot-scope="props">
+                      <span>{{props.row.receiptProvince}}&nbsp;{{props.row.receiptCity}}&nbsp;{{props.row.receiptArea}}&nbsp;{{props.row.receiptDetailed}}</span>
+                    </template>
+                  </el-table-column>
+                   <el-table-column
+                    label="操作" width="180">
+                    <template slot-scope="scope">
+                      <el-button
+                        size="medium"
+                        type="success"
+                        @click="assess(scope.$index,scope.row)">评价</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+          </div>
         </div>
       </div>
       <div class="bottom">
@@ -535,6 +659,9 @@
             shoppingListPeding:[],//选中的待支付列表
             payList:[],
             pendingPayment:[],//待支付
+            receiptList:[],//收货列表
+            indexList:[],//选取购物车的下标
+            assessList:[],//评价列表
           }
         },
       mounted(){
@@ -748,6 +875,26 @@
             });
           });
         },
+        //签收已付款的商品
+        signing(index,row){
+          this.$confirm('签收此商品, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '签收成功，感谢支持!'
+          });
+          this.receiptList.splice(index,1);
+          this.assessList.push(row);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消签收！'
+          });          
+        });
+        },
         //结算
         totalMoney(){
           this.pay=true;
@@ -844,6 +991,15 @@
                 loading.close();
                 this.set('支付成功，请注意查收！');
               }, 2000);
+              //清空购物车
+              for(let j=0;j<this.shoppingList.length;j++){
+                for(let k=0;k<this.shoppingCart.length;k++){
+                  if(this.shoppingList[j].id==this.shoppingCart[k].id){
+                    this.shoppingCart.splice(k,1);
+                  }
+                }
+              }
+              this.receiptList.push(...this.shoppingList);//待收货
               this.pay=false;
               this.active=1;
               return;
@@ -861,9 +1017,21 @@
         //关闭付款
         closePay(){
           if(this.active==3){
-            this.pendingPayment=this.shoppingList;
+        
+                //清空购物车
+              for(let j=0;j<this.shoppingList.length;j++){
+                for(let k=0;k<this.shoppingCart.length;k++){
+                  if(this.shoppingList[j].id==this.shoppingCart[k].id){
+                    this.shoppingCart.splice(k,1);
+                  }
+                }
+              }
+
+              //添加到待付款
+              this.pendingPayment.push(...this.shoppingList);
           }
           this.pay=false;
+          this.active=1;
         },
         //待支付处付款
         pedingPay(){
@@ -876,6 +1044,16 @@
               type: 'success',
               message: '支付成功！ '
             });
+                //删除待付款
+              for(let j=0;j<this.shoppingListPeding.length;j++){
+                for(let k=0;k<this.pendingPayment.length;k++){
+                  if(this.shoppingListPeding[j].id==this.pendingPayment[k].id){
+                    this.pendingPayment.splice(k,1);
+                  }
+                }
+              }
+              //添加到待收货
+              this.receiptList.push(...this.shoppingListPeding);
           }).catch(() => {
             this.$message({
               type: 'info',
