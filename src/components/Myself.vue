@@ -67,7 +67,7 @@
               <div class="pay-top-2">请核对信息</div>
               <div class="orderInfo">
                 <el-table
-                  :data="shoppingList"
+                  :data="payList"
                   style="width: 100%"
                   max-height="390"
                   >
@@ -100,23 +100,19 @@
                   </el-table-column>
                   <el-table-column
                     label="收货人"
+                    prop="receiptName"
                     width="120">
-                    <template slot-scope="props">
-                      <span>{{address[radio].name}}</span>
-                    </template>
                   </el-table-column>
                   <el-table-column
                     label="手机号码"
+                    prop="receiptPhone"
                     width="120">
-                    <template slot-scope="props">
-                      <span>{{address[radio].phone}}</span>
-                    </template>
                   </el-table-column>
                   <el-table-column
                     label="地址"
                     width="360">
                     <template slot-scope="props">
-                      <span>{{address[radio].province}}&nbsp;{{address[radio].city}}&nbsp;{{address[radio].area}}&nbsp;{{address[radio].detailed}}</span>
+                      <span>{{props.row.receiptProvince}}&nbsp;{{props.row.receiptCity}}&nbsp;{{props.row.receiptArea}}&nbsp;{{props.row.receiptDetailed}}</span>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -363,6 +359,78 @@
                 <div class="btn" @click="totalMoney"><el-button type="primary">结算</el-button></div>
             </div>
           </div>
+          <!-- 代付款 -->
+          <div class="pendingPayment" v-show="2==i">
+              <el-table
+                  :data="pendingPayment"
+                  style="width: 100%"
+                  max-height="390"
+                  @selection-change="handleSelectionChangeP"
+                  >
+                  <el-table-column
+                  type="selection"
+                   width="55">
+                 </el-table-column>
+                  <el-table-column
+                    fixed
+                    prop="time"
+                    label="日期"
+                    width="150">
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="price"
+                    label="单价"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="sum"
+                    label="数量"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="金额">
+                    <template slot-scope="props">
+                      <span style="color: #f40;font-weight:bold;">￥{{ props.row.price*props.row.sum}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="收货人"
+                    prop="receiptName"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="手机号码"
+                    prop="receiptPhone"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="地址"
+                    width="360">
+                    <template slot-scope="props">
+                      <span>{{props.row.receiptProvince}}&nbsp;{{props.row.receiptCity}}&nbsp;{{props.row.receiptArea}}&nbsp;{{props.row.receiptDetailed}}</span>
+                    </template>
+                  </el-table-column>
+                   <el-table-column
+                    label="操作" width="180">
+                    <template slot-scope="scope">
+                      <el-button
+                        size="medium"
+                        type="danger"
+                        @click="deletePeding(scope.$index,scope.row)">删除</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+               <div class="settlement">
+                <p class="sum">共选择 <b>{{shoppingListPeding.length}}</b> 件商品</p>
+                <p class="sumMoney">共计：<b>{{totalPeding}}</b> 元</p>
+                <div class="btn" @click="pedingPay"><el-button type="primary">结算</el-button></div>
+              </div>
+          </div>
         </div>
       </div>
       <div class="bottom">
@@ -443,9 +511,9 @@
               time:'2019-4-16',
               price:10,
               sum:2
-            }],
-            shoppingList:[],//选中的商品列表
+            }],//购物车列表
             total:0,//合计
+            totalPeding:0,//待支付合计
             active: 1,//步骤条
             isAddress:false,//添加的地址显示
             address:[],//我的收货地址
@@ -463,6 +531,10 @@
             pay:false,//添加收货地址展开
             isChangeAdd:-1,//是否修改地址
             inputPayPass:'',//支付密码
+            shoppingList:[],//选中的商品列表
+            shoppingListPeding:[],//选中的待支付列表
+            payList:[],
+            pendingPayment:[],//待支付
           }
         },
       mounted(){
@@ -574,6 +646,7 @@
         //显示修改头像
         headShow(){
             this.changeHead=true;
+            this.i=0;
         },
         //编辑资料
         openEdit(){
@@ -618,7 +691,7 @@
               }
             });
         },
-        //选中的商品列表
+        //选中的购物车商品列表
         handleSelectionChange(val){
           this.total = 0;
           this.shoppingList = val;
@@ -626,7 +699,16 @@
             this.total+=v.sum*v.price;
           });
         },
-        //删除商品
+        // 选中的待支付商品列表
+        handleSelectionChangeP(val){
+           this.totalPeding = 0;
+            this.shoppingListPeding = val;
+            this.shoppingListPeding.forEach((v)=>{
+              this.totalPeding+=v.sum*v.price;
+            });
+            console.log(this.shoppingListPeding);
+        },
+        //删除购物车商品
         handleDelete(index,row){
           console.log(index,row);
           this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
@@ -639,6 +721,26 @@
               message: '删除成功!'
             });
             this.shoppingCart.splice(index,1);
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        },
+        //删除待支付商品
+        deletePeding(index,row){
+          console.log(index,row);
+          this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+            this.pendingPayment.splice(index,1);
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -718,6 +820,16 @@
                 this.error('您还未选择收货地址！');
                 return;
               }
+              this.payList = this.shoppingList;
+               this.payList.forEach((v)=>{
+                v.receiptName=this.address[this.radio].name;
+                v.receiptPhone=this.address[this.radio].phone;
+                v.receiptProvince=this.address[this.radio].province;
+                v.receiptCity=this.address[this.radio].city;
+                v.receiptArea=this.address[this.radio].area;
+                v.receiptDetailed=this.address[this.radio].detailed;
+              });
+              console.log(this.payList)
               break;
             case 2:
               break;
@@ -748,7 +860,28 @@
         },
         //关闭付款
         closePay(){
+          if(this.active==3){
+            this.pendingPayment=this.shoppingList;
+          }
           this.pay=false;
+        },
+        //待支付处付款
+        pedingPay(){
+            this.$prompt('请输入登入密码', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            inputType:'password'
+          }).then(({ value }) => {
+            this.$message({
+              type: 'success',
+              message: '支付成功！ '
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '取消支付'
+            });       
+          });
         }
       }
     }
@@ -973,8 +1106,8 @@
   }
   .el-button--medium{
     display: inline-block;
-    width: 60px;
-    height: 40px;
+    width: 46px;
+    height: 24px;
   }
   .el-button--mini{
     display: inline-block;
