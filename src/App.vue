@@ -67,4 +67,7 @@ export default {
   .is-process{
     font-weight: normal;
   }
+  .el-textarea__inner{
+    resize: none;
+  }
 </style>

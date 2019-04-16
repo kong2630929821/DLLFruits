@@ -153,6 +153,38 @@
             </div>
           </div>
       </div>
+      <div class="discuss" v-show="discussShow">
+        <div class="discussBox">
+          <div class="orderTime">
+            <p>下单时间：<span>{{discuss.time}}</span></p>
+            <p>卖家：<span>果思自营</span></p>
+            <b @click="closeDiscuss">×</b>
+          </div>
+          <div class="orderContent">
+            <div class="infoImg">
+              <img :src="discuss.img" alt="">
+              <p>{{discuss.name}}</p>
+              <p class="orderPay">￥{{discuss.sum*discuss.price}}</p>
+            </div>
+            <div class="rate">
+              <p>商品评分：<el-rate v-model="rate.shop"></el-rate></p>
+              <p>服务评分：<el-rate v-model="rate.server"></el-rate></p>
+              <p>物流评分：<el-rate v-model="rate.goods"></el-rate></p>
+              <div class="orderText">
+                <el-input
+                  type="textarea"
+                  :autosize="{ minRows: 6, maxRows: 6}"
+                  placeholder="请输入内容"
+                  v-model="textarea3">
+                </el-input>
+              </div>
+              <div class="pushDis" @click="release">发表评价</div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
       <div class="my-top">
         <div class="userHead" @click="headShow">
           <img :src="userInfo.img" alt="">
@@ -302,7 +334,7 @@
                       <span>{{ props.row.time }}</span>
                     </el-form-item>
                     <el-form-item label="商品图片：">
-                      <img style="width: 150px;height: 150px" src="../../static/image/shop/2.jpg" alt="">
+                      <img style="width: 150px;height: 150px" :src="props.row.img" alt="">
                     </el-form-item>
                   </el-form>
                 </template>
@@ -318,7 +350,7 @@
               <el-table-column
                 label="商品信息">
                 <template slot-scope="props">
-                  <img style="width: 40px;height: 40px" src="../../static/image/shop/1.jpg" alt="">
+                  <img style="width: 40px;height: 40px" :src="props.row.img" alt="">
                 </template>
               </el-table-column>
               <el-table-column
@@ -600,6 +632,7 @@
               shop: '王小虎夫妻店',
               shopId: '10333',
               time:'2019-4-17',
+              img:'../../static/image/shop/2.jpg',
               price:120,
               sum:1
             }, {
@@ -611,6 +644,7 @@
               shop: '王小虎夫妻店',
               shopId: '10333',
               time:'2019-4-15',
+              img:'../../static/image/shop/2.jpg',
               price:120,
               sum:1
             }, {
@@ -622,6 +656,7 @@
               shop: '王小虎夫妻店',
               shopId: '10333',
               time:'2019-4-15',
+              img:'../../static/image/shop/2.jpg',
               price:120,
               sum:2
             }, {
@@ -633,6 +668,7 @@
               shop: '王小虎夫妻店',
               shopId: '10333',
               time:'2019-4-16',
+              img:'../../static/image/shop/2.jpg',
               price:10,
               sum:2
             }],//购物车列表
@@ -662,6 +698,15 @@
             receiptList:[],//收货列表
             indexList:[],//选取购物车的下标
             assessList:[],//评价列表
+            textarea3: '',//评论
+            rate:{
+              shop:5,
+              server:5,
+              goods:5
+            },//评论的等级
+            discussShow:false,//评论展示
+            discuss:{},//评论的商品信息
+            discussIndex:-1,//评论的下标
           }
         },
       mounted(){
@@ -895,6 +940,12 @@
           });          
         });
         },
+        //点击评论
+        assess(index,row){
+            this.discussShow=true;
+            this.discussIndex=index;
+            this.discuss=row;
+        },
         //结算
         totalMoney(){
           this.pay=true;
@@ -976,7 +1027,7 @@
                 v.receiptArea=this.address[this.radio].area;
                 v.receiptDetailed=this.address[this.radio].detailed;
               });
-              console.log(this.payList)
+              console.log(this.payList);
               break;
             case 2:
               break;
@@ -1017,7 +1068,6 @@
         //关闭付款
         closePay(){
           if(this.active==3){
-        
                 //清空购物车
               for(let j=0;j<this.shoppingList.length;j++){
                 for(let k=0;k<this.shoppingCart.length;k++){
@@ -1026,7 +1076,6 @@
                   }
                 }
               }
-
               //添加到待付款
               this.pendingPayment.push(...this.shoppingList);
           }
@@ -1060,6 +1109,18 @@
               message: '取消支付'
             });       
           });
+        },
+        //关闭评论
+        closeDiscuss(){
+            this.discussShow=false;
+        },
+        //提交评论
+        release(){
+          console.log(this.rate);
+          this.set('评价成功！');
+          this.discussShow=false;
+          this.assessList.splice(this.discussIndex,1);
+          this.discussIndex=-1;
         }
       }
     }
@@ -1146,6 +1207,100 @@
   .detailed{
     width: 336px;
     margin: 20px auto 0;
+  }
+  .discuss{
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    background: rgba(0, 0, 0,0.6);
+    .discussBox{
+      width: 546px;
+      height: 360px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      background: white;
+      margin-left:  -273px;
+      margin-top: -180px;
+      overflow: hidden;
+      .orderTime{
+        display: flex;
+        background: #f8f8f9;
+        height: 36px;
+        line-height: 36px;
+        margin-top: 10px;
+        p{
+          color:#9a9a9a;
+          margin-left: 10px;
+          span{
+              color: #323232;
+          }
+        }
+        b{
+          display: inline-block;
+          width: 60px;
+          height: 36px;
+          line-height: 36px;
+          text-align: center;
+          cursor: pointer;
+          margin-left: 220px;
+        }
+      }
+      .orderContent{
+        height: 346px;
+        display: flex;
+        .infoImg{
+          width: 231px;
+          height: 289px;
+          margin-top: 10px;
+          margin-left: 10px;
+          img{
+            width: 100%;
+            height: 231px;
+          }
+          p{
+            text-align: center;
+            color: #666668;
+            height: 20px;
+            line-height: 20px;
+            margin-top: 6px;
+          }
+          .orderPay{
+            font-weight: bold;
+            color: #f40;
+          }
+
+        }
+        .rate{
+          width: 302px;
+          p{
+            display: flex;
+            color: #9a9a9a;
+            padding: 10px 0 0 0;
+            justify-content: center;
+          }
+          .orderText{
+            width: 80%;
+            margin: 10px auto;
+          }
+          .pushDis{
+            width: 118px;
+            height: 40px;
+            background: #f40;
+            color: white;
+            font-weight: bold;
+            line-height: 40px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 20px auto;
+          }
+        }
+      }
+    }
   }
   .pay{
     width: 100vw;
