@@ -29,59 +29,6 @@
               <ul class="clearfix qqul">
 
     <li v-for="(v,i) in list" :key="i" :title="v.title"><img :src="v.src" alt="" @click="checkList(i)"></li>
-    <!--<li title="互粉"><img src="../../static/image/qq/2018new_hufen02_org.png" alt=""></li>-->
-    <!--<li title="挤眼"><img src="../../static/image/qq/2018new_jiyan_org.png" alt=""></li>-->
-    <!--<li title="可爱"><img src="../../static/image/qq/2018new_keai_org.png" alt=""></li>-->
-    <!--<li title="可怜"><img src="../../static/image/qq/2018new_kelian_org.png" alt=""></li>-->
-    <!--<li title="口罩"><img src="../../static/image/qq/2018new_kouzhao_thumb.png" alt=""></li>-->
-    <!--<li title="酷"><img src="../../static/image/qq/2018new_ku_org.png" alt=""></li>-->
-    <!--<li title="困"><img src="../../static/image/qq/2018new_kun_thumb.png" alt=""></li>-->
-    <!--<li title="苦笑"><img src="../../static/image/qq/2018new_kuxiao_org.png" alt=""></li>-->
-    <!--<li title="懒得理你"><img src="../../static/image/qq/2018new_landelini_org.png" alt=""></li>-->
-    <!--<li title="泪"><img src="../../static/image/qq/2018new_leimu_org.png" alt=""></li>-->
-    <!--<li title="疑问"><img src="../../static/image/qq/2018new_ningwen_org.png" alt=""></li>-->
-    <!--<li title="怒"><img src="../../static/image/qq/2018new_nu_thumb.png" alt=""></li>-->
-    <!--<li title="钱"><img src="../../static/image/qq/2018new_qian_thumb.png" alt=""></li>-->
-    <!--<li title="亲亲"><img src="../../static/image/qq/2018new_qinqin_thumb.png" alt=""></li>-->
-    <!--<li title="傻眼"><img src="../../static/image/qq/2018new_shayan_org.png" alt=""></li>-->
-    <!--<li title="生病"><img src="../../static/image/qq/2018new_shengbing_thumb.png" alt=""></li>-->
-    <!--<li title="失望"><img src="../../static/image/qq/2018new_shiwang_thumb.png" alt=""></li>-->
-    <!--<li title="衰"><img src="../../static/image/qq/2018new_shuai_thumb.png" alt=""></li>-->
-    <!--<li title="睡觉"><img src="../../static/image/qq/2018new_shuijiao_thumb.png" alt=""></li>-->
-    <!--<li title="思考"><img src="../../static/image/qq/2018new_sikao_org.png" alt=""></li>-->
-    <!--<li title="太开心"><img src="../../static/image/qq/2018new_taikaixin_org.png" alt=""></li>-->
-    <!--<li title="摊手"><img src="../../static/image/qq/2018new_tanshou_org.png" alt=""></li>-->
-    <!--<li title="舔屏"><img src="../../static/image/qq/2018new_tianping_thumb.png" alt=""></li>-->
-    <!--<li title="偷笑"><img src="../../static/image/qq/2018new_touxiao_org.png" alt=""></li>-->
-    <!--<li title="吐"><img src="../../static/image/qq/2018new_tu_org.png" alt=""></li>-->
-    <!--<li title="挖鼻"><img src="../../static/image/qq/2018new_wabi_thumb.png" alt=""></li>-->
-    <!--<li title="委屈"><img src="../../static/image/qq/2018new_weiqu_thumb.png" alt=""></li>-->
-    <!--<li title="威武"><img src="../../static/image/qq/2018new_weiwu_org.png" alt=""></li>-->
-    <!--<li title="微笑"><img src="../../static/image/qq/2018new_weixioa02_org.png" alt=""></li>-->
-    <!--<li title="问号"><img src="../../static/image/qq/2018new_wenhao_thumb.png" alt=""></li>-->
-    <!--<li title="捂眼"><img src="../../static/image/qq/2018new_wu_thumb.png" alt=""></li>-->
-    <!--<li title="笑而不语"><img src="../../static/image/qq/2018new_xiaoerbuyu_org.png" alt=""></li>-->
-    <!--<li title="笑哭"><img src="../../static/image/qq/2018new_xiaoku_thumb.png" alt=""></li>-->
-    <!--<li title="嘻嘻"><img src="../../static/image/qq/2018new_xixi_thumb.png" alt=""></li>-->
-    <!--<li title="嘘"><img src="../../static/image/qq/2018new_xu_org.png" alt=""></li>-->
-    <!--<li title="阴险"><img src="../../static/image/qq/2018new_yinxian_org.png" alt=""></li>-->
-    <!--<li title="左哼哼"><img src="../../static/image/qq/2018new_zuohengheng_thumb.png" alt=""></li>-->
-    <!--<li title="右哼哼"><img src="../../static/image/qq/2018new_youhengheng_thumb.png" alt=""></li>-->
-    <!--<li title="晕"><img src="../../static/image/qq/2018new_yun_thumb.png" alt=""></li>-->
-    <!--<li title="咒骂"><img src="../../static/image/qq/2018new_zhouma_thumb.png" alt=""></li>-->
-    <!--<li title="抓狂"><img src="../../static/image/qq/2018new_zhuakuang_org.png" alt=""></li>-->
-    <!--<li title="赞"><img src="../../static/image/qq/2018new_zan_org.png" alt=""></li>-->
-    <!--<li title="很棒"><img src="../../static/image/qq/2018new_good_org.png" alt=""></li>-->
-    <!--<li title="过来"><img src="../../static/image/qq/2018new_guolai_thumb.png" alt=""></li>-->
-    <!--<li title="哈哈手势"><img src="../../static/image/qq/2018new_hahashoushi_org.png" alt=""></li>-->
-    <!--<li title="加油"><img src="../../static/image/qq/2018new_jiayou_org.png" alt=""></li>-->
-    <!--<li title="不"><img src="../../static/image/qq/2018new_no_org.png" alt=""></li>-->
-    <!--<li title="好的"><img src="../../static/image/qq/2018new_ok_org.png" alt=""></li>-->
-    <!--<li title="拳头"><img src="../../static/image/qq/2018new_quantou_thumb.png" alt=""></li>-->
-    <!--<li title="弱"><img src="../../static/image/qq/2018new_ruo_org.png" alt=""></li>-->
-    <!--<li title="握手"><img src="../../static/image/qq/2018new_woshou_thumb.png" alt=""></li>-->
-    <!--<li title="耶"><img src="../../static/image/qq/2018new_ye_thumb.png" alt=""></li>-->
-    <!--<li title="作揖"><img src="../../static/image/qq/2018new_zuoyi_org.png" alt=""></li>-->
   </ul>
             </div>
           </div>

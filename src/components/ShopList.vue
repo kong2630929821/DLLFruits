@@ -16,7 +16,7 @@
         </ul>
         <div class="shop-list">
           <ol>
-            <li v-for="(v,i) in shopList" :key="i" :shop="v.id">
+            <li v-for="(v,i) in shopList" :key="i" :shop="v.id" @click="productDetails">
               <img :src="v.src" alt="">
               <p class="title">{{v.name}}</p>
               <p class="pice">￥{{v.pice}}</p>
@@ -139,8 +139,13 @@
           }
         },
         methods:{
+          //切换水果类型
           checkType(index){
              this.i = index;
+          },
+          //进入水果详情购买页面
+          productDetails(){
+            this.$router.replace({path:'productDetails'});
           }
         }
     }

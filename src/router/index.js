@@ -8,6 +8,7 @@ import ShopList from '../components/ShopList';
 import Know from '../components/Know.vue';
 import Community from '../components/Community';
 import Myself from '../components/Myself';
+import ProductDetails from '../components/ProductDetails';
 
 Vue.use(Router);
 
@@ -16,7 +17,7 @@ export default new Router({
     {
       path: '/',
       // redirect:'/index/indexMain'
-      redirect:'/index/myself'
+      redirect:'/index/productDetails'
     },
     {
       path: '/index',
@@ -58,11 +59,12 @@ export default new Router({
           name:'myself',
           component:Myself
         },
+        {
+          path:'productDetails',
+          name:'productDetails',
+          component:ProductDetails
+        }
       ]
-    },
-    {
-      path:'*',
-      redirect: '/index/aboutMe'
     }
   ]
 })
