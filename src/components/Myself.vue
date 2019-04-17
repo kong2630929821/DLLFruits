@@ -519,6 +519,10 @@
                     <template slot-scope="scope">
                       <el-button
                         size="medium"
+                        type="warning"
+                        @click="refund(scope.$index,scope.row)">退款</el-button>
+                      <el-button
+                        size="medium"
                         type="success"
                         @click="signing(scope.$index,scope.row)">签收</el-button>
                     </template>
@@ -583,6 +587,68 @@
                         size="medium"
                         type="success"
                         @click="assess(scope.$index,scope.row)">评价</el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+          </div>
+          <!-- 退款 -->
+          <div class="refund" v-show="5==i">
+              <el-table
+                  :data="refundList"
+                  style="width: 100%"
+                  max-height="390"
+                  >
+                  <el-table-column
+                    fixed
+                    prop="time"
+                    label="日期"
+                    width="150">
+                  </el-table-column>
+                  <el-table-column
+                    prop="name"
+                    label="商品名称"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="price"
+                    label="单价"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    prop="sum"
+                    label="数量"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="金额">
+                    <template slot-scope="props">
+                      <span style="color: #f40;font-weight:bold;">￥{{ props.row.price*props.row.sum}}</span>
+                    </template>
+                  </el-table-column>
+                  <el-table-column
+                    label="收货人"
+                    prop="receiptName"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="手机号码"
+                    prop="receiptPhone"
+                    width="120">
+                  </el-table-column>
+                  <el-table-column
+                    label="地址"
+                    width="360">
+                    <template slot-scope="props">
+                      <span>{{props.row.receiptProvince}}&nbsp;{{props.row.receiptCity}}&nbsp;{{props.row.receiptArea}}&nbsp;{{props.row.receiptDetailed}}</span>
+                    </template>
+                  </el-table-column>
+                   <el-table-column
+                    label="操作" width="180">
+                    <template slot-scope="scope">
+                      <el-button
+                        size="medium"
+                        type="warning"
+                      >正在申请</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -707,6 +773,7 @@
             discussShow:false,//评论展示
             discuss:{},//评论的商品信息
             discussIndex:-1,//评论的下标
+            refundList:[],//待退款的商品
           }
         },
       mounted(){
@@ -937,6 +1004,26 @@
           this.$message({
             type: 'info',
             message: '已取消签收！'
+          });          
+        });
+        },
+        // 退款已付款的商品
+        refund(index,row){
+          this.$confirm('你确定申请退款?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$message({
+            type: 'success',
+            message: '已成功申请，感谢支持!'
+          });
+          this.receiptList.splice(index,1);
+          this.refundList.push(row);
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消申请！'
           });          
         });
         },
@@ -1439,7 +1526,7 @@
   }
   .el-button--medium{
     display: inline-block;
-    width: 46px;
+    padding: 0 8px;
     height: 24px;
   }
   .el-button--mini{
