@@ -26,16 +26,6 @@
                 <div class="right">喜欢{{v.love}}</div>
               </div>
             </li>
-            <!--<li>-->
-              <!--<img src="" alt="">-->
-              <!--<p class="title">赣南脐橙</p>-->
-              <!--<p class="pice">￥123.00</p>-->
-              <!--<div class="inf">-->
-                <!--<div class="left">已售12</div>-->
-                <!--<div class="cen">|</div>-->
-                <!--<div class="right">喜欢120</div>-->
-              <!--</div>-->
-            <!--</li>-->
           </ol>
         </div>
         <div class="page">
@@ -181,7 +171,8 @@
         height: 200px;
         position: absolute;
         top: 127px;
-        left: 263px;
+        left: 50%;
+        margin-left: -400px;
         img{
           width: 402px;
           height: 200px;
@@ -189,10 +180,12 @@
       }
     }
     .list{
+      width: 100vw;
       overflow: hidden;
       ul{
-        margin-top: 80px;
-        margin-left: 377px;
+        margin: 80px auto 0;
+        display: flex;
+        justify-content: center;
         overflow: hidden;
         li{
           float: left;

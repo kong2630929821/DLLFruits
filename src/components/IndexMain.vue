@@ -235,7 +235,6 @@
     clear: both;
   }
   #index-box{
-    width: 1349px;
     position: relative;
     .navbar{
       width: 100%;
@@ -294,7 +293,7 @@
         height: 100%;
       }
         img{
-          width: 1349px;
+          width: 100vw;
           height: 400px;
         }
     }

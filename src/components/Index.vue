@@ -16,15 +16,15 @@
           <el-input v-model="input" placeholder="" size="mini"></el-input>
           <span class="el-icon-search"></span>
         </li>
-        <li>
+        <li @click="shopingCart">
           <span class="fa fa-shopping-cart"></span>
         </li>
-        <li>
+        <li @click="myself">
           <span class="fa fa-list-ul"></span>
         </li>
         <li @click="isLogin" class="usersInfo">
           <span v-show="!successLogin" class="fa fa-user-o"></span>
-          <div v-show="successLogin" class="userImg" style="background: url(../../static/image/qq/2018new_dahaqian_org.png)"></div>
+          <div v-show="successLogin" class="userImg"  :style="{ 'background': 'url(' + user.u_img + ') no-repeat center center', 'background-size': '100% 100%'}"></div>
           <b>{{user.u_name?user.u_name:'我的账户'}}</b>
         </li>
       </ol>
@@ -126,7 +126,11 @@
         },
         //点击展开登入
         isLogin(){
-          this.login=true;
+          if(this.user.u_id){
+            this.$router.push({name:'myself',params:{index:0}});
+          }else{
+            this.login=true;
+          }
         },
         //关闭登入界面
         closeLogin(){
@@ -225,6 +229,7 @@
              }
            }).then((res)=>{
              if(res.data.error){
+               console.log(res);
                alert('登入成功');
              }
            });
@@ -239,11 +244,13 @@
                     pass:this.inputCode
                   }
                 }).then((res)=>{
-                  console.log(res);
+                  console.log('登录成功！！！！！！！！！',res);
                   if(res.data.error){
                     this.open2('登入成功，欢迎进入果思！');
                     this.successLogin=true;
                     this.user=res.data.data[0];
+                    localStorage.setItem('userInfo',JSON.stringify(this.user));
+                    this.$store.commit('changeInfo',this.user);
                     this.login = false;
                   }else{
                     this.open3('账号或密码错误，请重新登入！');
@@ -252,7 +259,33 @@
                 })
             }
          }
+        },
+       //个人中心
+        myself(){
+          if(this.user.u_id){
+            this.$router.push({name:'myself',params:{index:0}});
+          }else{
+            this.open3('请登录再试');
+          }
+
+        },
+        //购物车
+        shopingCart(){
+          if(this.user.u_id){
+            this.$router.push({name:'myself',params:{index:1}});
+          }else{
+            this.open3('请登录再试');
+          }
         }
+      },
+      mounted(){
+          this.user=this.userInfo=this.$store.state.userInfo;
+          if(this.user.u_id){
+            this.successLogin=true;
+          }else{
+            this.successLogin=false;
+          }
+
       }
     }
 </script>
@@ -417,6 +450,8 @@
     color: #3c586d;
     cursor: pointer;
     background: #f2f2f2;
+    display: flex;
+    justify-content: space-around;
     img{
       width: 78px;
       height: 50px;

@@ -3,7 +3,7 @@
       <section>
         <div class="release clearfix">
           <div class="releaseTop">
-            <textarea>{{inputContent}}</textarea>
+            <textarea v-model="inputContent"></textarea>
             <div class="ok clearfix">
               <div class="div1"></div>
               <p>发布成功</p>
@@ -19,7 +19,7 @@
               <p>图片</p>
             </div>
             <input v-if="!src.length" @change="fileChange" class="f1" name="files" type="file" accept="image/jpg,image/jpeg,image/png,image/gif" multiple>
-            <button>发布</button>
+            <button @click="release">发布</button>
           </div>
           <!--表情-->
           <div class="icon" v-show="isShow">
@@ -27,9 +27,8 @@
             <div class="icon1">
               <div class="close" @click="closeQQ">×</div>
               <ul class="clearfix qqul">
-
-    <li v-for="(v,i) in list" :key="i" :title="v.title"><img :src="v.src" alt="" @click="checkList(i)"></li>
-  </ul>
+                  <li v-for="(v,i) in list" :key="i" :title="v.title"><img :src="v.src" alt="" @click="checkList(i)"></li>
+              </ul>
             </div>
           </div>
           <!--图片-->
@@ -51,45 +50,44 @@
         </div>
         <div class="list clearfix">
           <ul class="list1">
-            <li u_id="1" p_id="1">
-                <img class="upimg" src="" alt="">
-                <p title="1111">
-                  <img src="../../static/image/qq/2018new_baibai_thumb.png">
-                </p>
-                <strong class="fa fa-star-o u1"></strong>
-                <b class="fa fa-thumbs-o-up"></b>
-                <span>22</span>
-                <i class="fa fa-commenting-o"></i>
-                <u>12</u>
-                <em class="fa fa-trash-o"></em>
+            <li v-for="(v,index) in listOne" :key="index" @click="currentList(0,index)">
+              <img class="upimg" :src="v.src.split('|')[0]" alt="">
+              <p :title="v.p_content" v-html="v.p_content">
+              </p>
+              <strong class="fa fa-star-o u1"></strong>
+              <span>{{v.p_collect}}</span>
+              <b class="fa fa-thumbs-o-up"></b>
+              <span>{{v.p_zan}}</span>
+              <i class="fa fa-commenting-o"></i>
+              <u>{{v.p_discuss + v.p_relay}}</u>
+              <em class="fa fa-trash-o"></em>
             </li>
           </ul>
           <ul class="list2">
-            <li u_id="1" p_id="1">
-              <img class="upimg" src="../../static/image/qq/2018new_beishang_org.png" alt="">
-              <p title="1111">
-                <img src="../../static/image/qq/2018new_baibai_thumb.png">
+            <li v-for="(v,index) in listTwo" :key="index" @click="currentList(1,index)">
+              <img class="upimg" :src="v.src.split('|')[0]" alt="">
+              <p :title="v.p_content" v-html="v.p_content">
               </p>
               <strong class="fa fa-star-o u1"></strong>
+              <span>{{v.p_collect}}</span>
               <b class="fa fa-thumbs-o-up"></b>
-              <span>22</span>
+              <span>{{v.p_zan}}</span>
               <i class="fa fa-commenting-o"></i>
-              <u>12</u>
+              <u>{{v.p_discuss + v.p_relay}}</u>
               <em class="fa fa-trash-o"></em>
             </li>
           </ul>
           <ul class="list3">
-            <li u_id="1" p_id="1">
-              <img class="upimg" src="../../static/image/qq/2018new_dahaqian_org.png" alt="">
-              <p title="1111">
-                是范德萨范德三生三世死死死死死死飒飒是所所所所所所所所所所所士大夫士大夫萨发斯蒂芬是的
-                <img src="../../static/image/qq/2018new_baibai_thumb.png">
+            <li v-for="(v,index) in listThree" :key="index" @click="currentList(2,index)">
+              <img class="upimg" :src="v.src.split('|')[0]" alt="">
+              <p :title="v.p_content" v-html="v.p_content">
               </p>
               <strong class="fa fa-star-o u1"></strong>
+              <span>{{v.p_collect}}</span>
               <b class="fa fa-thumbs-o-up"></b>
-              <span>22</span>
+              <span>{{v.p_zan}}</span>
               <i class="fa fa-commenting-o"></i>
-              <u>12</u>
+              <u>{{v.p_discuss + v.p_relay}}</u>
               <em class="fa fa-trash-o"></em>
             </li>
           </ul>
@@ -194,10 +192,24 @@
             imgShow:false,
             input:[],
             src:[],
-            addImg:true
+            expression:'',
+            addImg:true,
+            userInfo:{},
+            topicList:[],
+            listOne:[],
+            listTwo:[],
+            listThree:[],
+            str:''
           }
         },
       methods:{
+        //修改成功弹框
+        set(msg){
+          this.$message({
+            message: msg,
+            type: 'success'
+          });
+        },
         //打开QQ表情
         openQQ(){
           this.isShow=!this.isShow;
@@ -233,9 +245,10 @@
                   if(that.src.length>=9){
                     that.addImg = false;
                   }
-            }
+              }
             }
           });
+          console.log(f1);
           console.log(this.src);
         },
         //第二次添加图片
@@ -271,11 +284,126 @@
         //选择某个QQ表情
         checkList(index){
           this.inputContent = this.inputContent+'['+this.list[index].title+']';
+        },
+        //发布
+        release(){
+          console.log(this.inputContent);
+          const oDate1=new Date();
+          const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+          console.log(oDate);
+          const  name=[];
+          var formData=new FormData();
+          for(let i=0;i<this.input.length;i++){
+            formData.append('files',this.input[i]);
+            console.log(this.input[i].name);
+            name.push(this.input[i].name);
+          }
+          this.$axios({
+            method: 'post',
+            url:'/api/release',
+            data:{
+              id:this.$store.state.userInfo.u_id,
+              content:this.inputContent,
+              date:oDate,
+              src:name
+            }
+          }).then(res1=>{
+            console.log(res1);
+            const id=res1.data.id;
+            if(res1.data.error){
+              this.$axios({
+                method:'post',
+                url:'/api/upload',
+                data:formData
+              }).then(res2=>{
+                if(!res2.data.error){
+                  this.set('发布成功！');
+                  this.imgShow = false;
+                  let data={
+                    p_id:id,
+                    p_content:this.inputContent,
+                    u_id:this.userInfo.u_id,
+                    p_zan:0,
+                    p_discuss:0,
+                    p_collect:0,
+                    p_relay:0,
+                    p_time:oDate,
+                    src:this.src[0]||""
+                  };
+                  const reg=/[[\u4e00-\u9fa5]+]/g;
+                  data.p_content=data.p_content.replace(reg,(word)=>{
+                    console.log(word);
+                    const str=word.substring(1,word.length-1);
+                    this.list.forEach(v=>{
+                      if(v.title==str){
+                        word=v.src
+                      }
+                    });
+                    return '<img src="'+word+'">'
+                  });
+                  console.log(data);
+                  console.log(this.listOne);
+                  this.listOne.push(data);
+                  this.inputContent='';
+                  this.isShow=false;
+                  this.imgShow=false;
+                }
+              })
+            }
+          })
+        },
+        //点击进入详情
+        currentList(currentIndex,j){
+          console.log(currentIndex,j);
+          let id=null;
+          if(currentIndex==0){
+            id= this.listOne[j].p_id;
+          }else if(currentIndex==1){
+            id= this.listTwo[j].p_id;
+          }else{
+            id= this.listThree[j].p_id;
+          }
+          this.$router.push({name:'information',params:{id}});
         }
       },
-      computed:{
-        
-      }
+      mounted(){
+        this.userInfo=this.$store.state.userInfo;
+        this.$axios({
+          method:'post',
+          url:'/api/getAllTopics'
+        }).then(res=>{
+          if(res.data.data.length){
+            this.topicList=res.data.data;
+            const reg=/[[\u4e00-\u9fa5]+]/g;
+            this.topicList.forEach(v=>{
+              v.p_content=v.p_content.replace(reg,(word)=>{
+                const str=word.substring(1,word.length-1);
+                this.list.forEach(v=>{
+                    if(v.title==str){
+                      word=v.src
+                    }
+                });
+                return '<img src="'+word+'">'
+              });
+            });
+            this.listOne.push(this.topicList[0]);
+            this.topicList.unshift();
+            this.topicList.forEach(v=>{
+              function getrandom(n,m) {
+                return Math.floor(Math.random()*(m-n)+n)
+              }
+              const i = getrandom(0,3);
+              if(i==0){
+                this.listOne.push(v);
+              }else if(i==1){
+                this.listTwo.push(v);
+              }else{
+                this.listThree.push(v);
+              }
+            })
+          }
+        })
+      },
     }
 </script>
 

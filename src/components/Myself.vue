@@ -187,11 +187,11 @@
       </div>
       <div class="my-top">
         <div class="userHead" @click="headShow">
-          <img :src="userInfo.img" alt="">
+          <img :src="userInfo.u_img" alt="">
         </div>
         <div class="userName">
-            <span>{{userInfo.name?userInfo.name:'果思用户'+userInfo.id}}</span>
-            <div class="famle" v-show="userInfo.sex=='女'">
+            <span>{{userInfo.u_name?userInfo.u_name:'果思用户'+userInfo.u_id}}</span>
+            <div class="famle" v-show="userInfo.u_sex=='女'">
               <b class="fa fa-venus"></b>
             </div>
             <div class="fale" v-show="userInfo=='男'">
@@ -210,7 +210,7 @@
           <!--设置头像-->
           <div class="set-right" v-show="changeHead">
             <div class="div1">
-              <img :src="userInfo.img" alt="" class="img1">
+              <img :src="userInfo.u_img" alt="" class="img1">
               <div class="box1"></div>
             </div>
             <canvas id="c1" width="150" height="150"></canvas>
@@ -226,7 +226,7 @@
                 <p>昵称：</p>
                 <el-input
                   placeholder="请输入昵称"
-                  v-model="userInfo.name"
+                  v-model="userInfo.u_name"
                   :disabled="edit"
                   clearable>
                 </el-input>
@@ -235,7 +235,7 @@
               <p>账号：</p>
               <el-input
                 placeholder="请输入账号"
-                v-model="userInfo.account"
+                v-model="userInfo.u_account"
                 :disabled="edit"
                 clearable>
               </el-input>
@@ -263,7 +263,7 @@
               <div class="code" @click="verification">{{countdown}}</div>
               <el-input
                 placeholder="请输入手机号码"
-                v-model="userInfo.phone"
+                v-model="userInfo.u_phone"
                 :disabled="edit"
                 clearable>
               </el-input>
@@ -279,15 +279,15 @@
             </div>
             <div class="input1">
                 <div class="checkSex">
-                  <el-radio v-model="userInfo.sex" :disabled="edit" label="男">男</el-radio>
-                  <el-radio v-model="userInfo.sex" :disabled="edit" label="女">女</el-radio>
+                  <el-radio v-model="userInfo.u_sex" :disabled="edit" label="男">男</el-radio>
+                  <el-radio v-model="userInfo.u_sex" :disabled="edit" label="女">女</el-radio>
                 </div>
             </div>
             <div class="input1">
               <p>邮箱：</p>
               <el-input
                 placeholder="请输入邮箱"
-                v-model="userInfo.mail"
+                v-model="userInfo.u_mail"
                 :disabled="edit"
                 clearable>
               </el-input>
@@ -680,7 +680,7 @@
           return{
             myList:['个人资料','购物车','待付款','待收货','评价','退款/售后'],
             userInfo:{},
-            i:1,//控制对应的模块显示
+            i:0,//控制对应的模块显示
             changeHead:false,//是否显示头像
             inputPass:'',//密码
             inputOkPass:'',//确认密码
@@ -779,8 +779,13 @@
       mounted(){
           //获取用户信息
         this.userInfo=this.$store.state.userInfo;
+        console.log(this.userInfo);
         //获取用户收货地址
         this.address=this.$store.state.address;
+        //获取显示哪个版块
+        this.i=this.$route.params.index||0;
+        console.log(this.$route.params.index);
+        console.log(this.userInfo);
         let that=this;
         let oFile=document.querySelector('#file1');
         let oDiv=document.querySelector('.box1');
@@ -1613,7 +1618,6 @@
     display: none;
   }
   .my-top{
-    width: 1349px;
     height: 250px;
     background: #c3d154;
     overflow: hidden;
@@ -1672,7 +1676,6 @@
     }
   }
   .my-list{
-    width: 1349px;
     height: 40px;
     ul{
       display: flex;
@@ -1684,7 +1687,6 @@
     }
   }
   .my-content{
-    width: 1349px;
     background: #eeeded;
     overflow: hidden;
     .content-top{

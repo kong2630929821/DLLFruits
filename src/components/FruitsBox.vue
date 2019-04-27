@@ -67,7 +67,6 @@
     clear: both;
   }
   #fruitsBox{
-    width: 1349px;
     overflow: hidden;
     background: #f2f2f2;
     .bottom{

@@ -9,6 +9,7 @@ import Know from '../components/Know.vue';
 import Community from '../components/Community';
 import Myself from '../components/Myself';
 import ProductDetails from '../components/ProductDetails';
+import Information from '../components/Information';
 
 Vue.use(Router);
 
@@ -17,7 +18,7 @@ export default new Router({
     {
       path: '/',
       // redirect:'/index/indexMain'
-      redirect:'/index/productDetails'
+      redirect:'/index/information'
     },
     {
       path: '/index',
@@ -63,6 +64,11 @@ export default new Router({
           path:'productDetails',
           name:'productDetails',
           component:ProductDetails
+        },
+        {
+          path:'information',
+          name:'information',
+          component:Information
         }
       ]
     }

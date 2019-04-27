@@ -5,7 +5,7 @@
       <div class="detailTop-img">
         <div id="moveLeft" @mouseenter="enter" @mouseleave="leave" @mousemove="move">
           <img class="maxImg" :src="detailInfo.maxImg[i]" alt="">
-          <span id="moveSpan" v-show="showMaxImg"></span>
+          <span id="moveSpan"></span>
         </div>
         <ul class="minList">
           <li v-for="(item,index) in detailInfo.minImg" :key="index" @click="changeCurrent(index)" :class="{'current':i==index}"><img :src="item" alt=""></li>
@@ -166,50 +166,52 @@ name:'ProductDetails',
     };
   },
   methods:{
-    //详情图片的切换
-    changeCurrent(index){
-      this.i=index;
-    },
-    //商品详情和评价的切换
-    commodityDetails(index){
-      if(index==1){
-        this.parameter=true;
-      }else{
-        this.parameter=false;
-      }
-    },
-    //鼠标移入图片显示大图
-    enter(){
-      this.showMaxImg=true;
-    },
-    //鼠标移出隐藏大图
-    leave(){
-      this.showMaxImg=false;
-    },
-    //鼠标移动时放大对应的位置
-    move(e){
-      let oDivL=document.querySelector('#moveLeft');
-      let oDivR=document.querySelector('#moveRight');
-      let oSpan=document.querySelector('#moveSpan');
-      let oImg=document.querySelector('#moveImg');
-      let l=e.clientX-oSpan.offsetWidth-oDivL.offsetLeft-88+document.documentElement.scrollLeft;
-      let t=e.clientY-oSpan.offsetHeight-oDivL.offsetTop+10+document.documentElement.scrollTop;
-      if(l<=0){
-        l=0;
-      }else if(l>=oDivL.offsetWidth-oSpan.offsetWidth){
-        l=oDivL.offsetWidth-oSpan.offsetWidth;
-      }
-      if(t<=0){
-        t=0;
-      }else if(t>=oDivL.offsetHeight-oSpan.offsetHeight){
-        t=oDivL.offsetHeight-oSpan.offsetHeight;
-      }
-      oSpan.style.left=l+'px';
-      oSpan.style.top=t+'px';
-      this.moveX=-oSpan.offsetLeft*(oImg.offsetWidth-oDivR.offsetWidth)/(oDivL.offsetWidth-oSpan.offsetWidth);
-      this.moveY=-oSpan.offsetTop*(oImg.offsetHeight-oDivR.offsetHeight)/(oDivL.offsetHeight-oSpan.offsetHeight);
+  //详情图片的切换
+  changeCurrent(index){
+    this.i=index;
+  },
+  //商品详情和评价的切换
+  commodityDetails(index){
+    if(index==1){
+      this.parameter=true;
+    }else{
+      this.parameter=false;
     }
+  },
+  //鼠标移入图片显示大图
+  enter(){
+    this.showMaxImg=true;
+  },
+  //鼠标移出隐藏大图
+  leave(){
+    this.showMaxImg=false;
+  },
+  //鼠标移动时放大对应的位置
+  move(e){
+    let oDivL=document.querySelector('#moveLeft');
+    let oDivR=document.querySelector('#moveRight');
+    let oSpan=document.querySelector('#moveSpan');
+    let oImg=document.querySelector('#moveImg');
+    //如果没出现定位则获取父级的定位
+    let l=e.clientX-oSpan.offsetWidth/2-oDivL.offsetParent.offsetLeft+document.documentElement.scrollLeft;
+    let t=e.clientY-oSpan.offsetHeight/2-oDivL.offsetParent.offsetTop+document.documentElement.scrollTop;
+    if(l<=0){
+      l=0;
+    }else if(l>=oDivL.offsetWidth-oSpan.offsetWidth){
+      l=oDivL.offsetWidth-oSpan.offsetWidth;
+    }
+    if(t<=0){
+      t=0;
+    }else if(t>=oDivL.offsetHeight-oSpan.offsetHeight){
+      t=oDivL.offsetHeight-oSpan.offsetHeight;
+    }
+    oSpan.style.left=l+'px';
+    oSpan.style.top=t+'px';
+    console.log(l,t);
+    this.moveX=-oSpan.offsetLeft*(oImg.offsetWidth-oDivR.offsetWidth)/(oDivL.offsetWidth-oSpan.offsetWidth);
+    this.moveY=-oSpan.offsetTop*(oImg.offsetHeight-oDivR.offsetHeight)/(oDivL.offsetHeight-oSpan.offsetHeight);
   }
+}
 }
 
 </script>
@@ -222,9 +224,27 @@ name:'ProductDetails',
 .isActive{
   background: #eee;
 }
-.moveLeft{
+#moveLeft{
   width: 418px;
   height: 418px;
+  img{
+    position: absolute;
+  }
+}
+#moveSpan{
+  width: 209px;
+  height: 209px;
+  background: green;
+  opacity: 0.3;
+  position: absolute;
+  display: block;
+  /*cursor:all-scroll;*/
+  cursor:move;
+}
+#moveImg{
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .maximg{
   width: 418px;
@@ -239,7 +259,6 @@ name:'ProductDetails',
   }
 }
 .detail{
-  width: 1349px;
   overflow: hidden;
 }
 .detailTop{
@@ -249,23 +268,11 @@ name:'ProductDetails',
   display: flex;
   .detailTop-img{
     width: 418px;
-    height: 418px;
+    height: 520px;
     position: relative;
     .maxImg{
-      width: 100%;
-      height: 100%;
-    }
-    span{
-      width: 209px;
-      height: 209px;
-      background: green;
-      opacity: 0.3;
-      position: absolute;
-      left: 0;
-      top: 0;
-      display: block;
-      /*cursor:all-scroll;*/
-      cursor:move;
+      width: 418px;
+      height: 418px;
     }
     .minList{
       width: 418px;
@@ -274,6 +281,8 @@ name:'ProductDetails',
       display: flex;
       justify-content: space-around;
       cursor: pointer;
+      position: absolute;
+      bottom: 0;
       .current{
         border-color: black;
       }
