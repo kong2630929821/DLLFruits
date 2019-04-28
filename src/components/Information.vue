@@ -11,90 +11,15 @@
         </div>
         <div class="bottom" v-html="currentTopic.p_content"></div>
         <div class="count">
-          <strong class="fa fa-star-o u1"></strong>
+          <strong class="fa fa-star-o u1" @click="collect" ref="collect"></strong>
           <span>{{currentTopic.p_collect}}</span>
-          <b class="fa fa-thumbs-o-up"></b>
+          <b class="fa fa-thumbs-o-up" @click="zan" ref="zan"></b>
           <span>{{currentTopic.p_zan}}</span>
           <i class="fa fa-commenting-o"></i>
           <u>{{currentTopic.p_relay + currentTopic.p_discuss}}</u>
           <em class="fa fa-trash-o"></em>
         </div>
         <div class="cont">
-
-
-          <!--<div>-->
-            <!--<div class="single-reply clearfix">-->
-              <!--<img class="ui-avatar" src="../../static/image/qq/2018new_quantou_thumb.png" alt="">-->
-              <!--<div class="comments-content">-->
-                <!--<a href="">空</a>:-->
-                <!--<em class="em1">涣发大号是飞机可视电话</em>-->
-                <!--<div class="ri">-->
-                  <!--<em class="em2">2016-12-11</em>-->
-                  <!--<i class="fa fa-commenting-o i1"></i>-->
-                  <!--<em class="fa fa-trash-o em3"></em>-->
-                <!--</div>-->
-              <!--</div>-->
-            <!--</div>-->
-
-            <!--<div class="comments-list">-->
-              <!--<ul>-->
-                <!--<li>-->
-                  <!--<div class="single1-reply clearfix">-->
-                    <!--<img class="ui-avatar" src="../../static/image/qq/2018new_dahaqian_org.png" alt="">-->
-                    <!--<div class="comments-content">-->
-                      <!--<a class="a1" href="">白</a>-->
-                      <!--<i class="i4">回复</i>-->
-                      <!--<a class="a2" href="">空</a>-->
-                      <!--<em class="em7">防守打法所多所多所多所多所多所多所多所多所多所多所多所多所多所多所多所多反倒是发送到发送到发送到发送到发送到发送到</em>-->
-                      <!--<div class="ri1">-->
-                        <!--<em class="em5">2015-12-12</em>-->
-                        <!--<i class="fa fa-commenting-o i2"></i>-->
-                        <!--<em class="fa fa-trash-o em4"></em>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                  <!--</div>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-            <!--<div class="comments-list">-->
-              <!--<ul>-->
-                <!--<li>-->
-                  <!--<div class="single1-reply clearfix">-->
-                    <!--<img class="ui-avatar" src="../../static/image/qq/2018new_dahaqian_org.png" alt="">-->
-                    <!--<div class="comments-content">-->
-                      <!--<a class="a1" href="">白</a>-->
-                      <!--<i class="i4">回复</i>-->
-                      <!--<a class="a2" href="">空</a>-->
-                      <!--<em class="em7">防守打法所多所多所多所多所多所多所多所多所多所多所多所多所多所多所多所多反倒是发送到发送到发送到发送到发送到发送到</em>-->
-                      <!--<div class="ri1">-->
-                        <!--<em class="em5">2015-12-12</em>-->
-                        <!--<i class="fa fa-commenting-o i2"></i>-->
-                        <!--<em class="fa fa-trash-o em4"></em>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                  <!--</div>-->
-                <!--</li>-->
-                <!--<li>-->
-                  <!--<div class="single1-reply clearfix">-->
-                    <!--<img class="ui-avatar" src="../../static/image/qq/2018new_dahaqian_org.png" alt="">-->
-                    <!--<div class="comments-content">-->
-                      <!--<a class="a1" href="">白</a>-->
-                      <!--<i class="i4">回复</i>-->
-                      <!--<a class="a2" href="">空</a>-->
-                      <!--<em class="em7">防守打法所多所多所多所多所所多所多所多所多所多所多所多所多所多所多所多所多所多反倒是发送所多所多所多所多所多所多所多所多所多所多所多所多所多反倒是发送所多所多所多所多所多所多所多所多所多所多所多所多所多反倒是发送所多所多所多所多所多所多所多所多所多所多所多所多所多反倒是发送所多所多所多所多所多所多所多所多所多所多所多所多所多反倒是发送多所多所多所多所多所多所多所多所多所多所多所多反倒是发送到发送到发送到发送到发送到发送到</em>-->
-                      <!--<div class="ri1">-->
-                        <!--<em class="em5">2015-12-12</em>-->
-                        <!--<i class="fa fa-commenting-o i2"></i>-->
-                        <!--<em class="fa fa-trash-o em4"></em>-->
-                      <!--</div>-->
-                    <!--</div>-->
-                  <!--</div>-->
-                <!--</li>-->
-              <!--</ul>-->
-            <!--</div>-->
-
-          <!--</div>-->
-
           <div v-for="(v,index) in discussList" :key="index">
               <div class="single-reply clearfix">
                 <img class="ui-avatar" :src="v.u_img" alt="">
@@ -102,9 +27,9 @@
                   <a href="">{{v.u_name}}</a>:
                   <em class="em1" v-html="v.d_content"></em>
                   <div class="ri">
-                    <em class="em2" :title="v.d_time">{{v.d_time.substring(8,16)}}</em>
-                    <i class="fa fa-commenting-o i1"></i>
-                    <em class="fa fa-trash-o em3"></em>
+                    <em class="em2" :title="v.d_time">{{v.d_time.substring(7,15)}}</em>
+                    <i class="fa fa-commenting-o i1" @click="respondent(index)"></i>
+                    <em class="fa fa-trash-o em3" @click="removeDiscuss(index)"></em>
                   </div>
                 </div>
               </div>
@@ -113,31 +38,31 @@
               <ul>
                 <li v-for="(v1,i) in v.replyArr" :key="i">
                   <div class="single1-reply clearfix">
-                    <img class="ui-avatar" :src="v1.u_img" alt="">
+                    <img class="ui-avatar" :src="v1.r_meSrc" alt="">
                     <div class="comments-content">
-                      <a class="a1" href="">{{v1.u_name}}</a>
+                      <a class="a1" href="">{{v1.r_meName}}</a>
                       <i class="i4">回复</i>
-                      <a class="a2" href="">{{v1.r_name}}</a>
+                      <a class="a2" href="">{{v1.r_heName}}</a>
                       <em class="em7" v-html="v1.r_content"></em>
                       <div class="ri1">
                         <em class="em5" :title="v1.r_time">{{v1.r_time.substring(8,16)}}</em>
-                        <i class="fa fa-commenting-o i2"></i>
-                        <em class="fa fa-trash-o em4"></em>
+                        <i class="fa fa-commenting-o i2" @click="respondented(index,i)"></i>
+                        <em class="fa fa-trash-o em4" @click="removeReply(index,i)"></em>
                       </div>
                     </div>
                   </div>
 
                   <div class="single1-reply clearfix" v-for="(v2,j) in v1.replyArrList" :key="j">
-                    <img class="ui-avatar" :src="v2.u_img" alt="">
+                    <img class="ui-avatar" :src="v2.r_meSrc" alt="">
                     <div class="comments-content">
-                      <a class="a1" href="">{{v2.u_name}}</a>
+                      <a class="a1" href="">{{v2.r_meName}}</a>
                       <i class="i4">回复</i>
-                      <a class="a2" href="">{{v2.r_name}}</a>
+                      <a class="a2" href="">{{v2.r_heName}}</a>
                       <em class="em7" v-html="v2.r_content"></em>
                       <div class="ri1">
                         <em class="em5" :title="v2.r_time">{{v2.r_time.substring(8,16)}}</em>
-                        <i class="fa fa-commenting-o i2"></i>
-                        <em class="fa fa-trash-o em4"></em>
+                        <i class="fa fa-commenting-o i2" @click="respondented(index,i)"></i>
+                        <em class="fa fa-trash-o em4" @click="removeReplys(index,i,j)"></em>
                       </div>
                     </div>
                   </div>
@@ -154,7 +79,7 @@
             <a>评论</a>
           </div>
           <div class="text" v-show="isShow">
-            <textarea v-model="inputContent"></textarea>
+            <textarea v-model="inputContent" :placeholder="prompt"></textarea>
             <div class="div1">
               <img src="../../static/image/qq/face.png" alt="" class="qq" @click="changeQQShow">
               <button class="btn2" @click="reply">{{btnName}}</button>
@@ -284,47 +209,30 @@
             userInfo:{},
             currentTopic:{},
             btnName:'评论',
-            discussList:[
-              { u_id:1,
-                u_name:'Jong',
-                u_img:'../../static/image/qq/2018new_quantou_thumb.png',
-                d_content: '还打算打算建安说的很对卡视角',
-                d_time:'2018-12-13 12:13:14',
-                replyArr:[
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]},
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]}
-                ]},
-              { u_id:1,
-                u_name:'Jong',
-                u_img:'../../static/image/qq/2018new_quantou_thumb.png',
-                d_content: '还打算打算建安说的很对卡视角',
-                d_time:'2018-12-13',
-                replyArr:[
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]},
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]}
-                ]},
-              { u_id:1,
-                u_name:'Jong',
-                u_img:'../../static/image/qq/2018new_quantou_thumb.png',
-                d_content: '还打算打算建安说的很对卡视角',
-                d_time:'2018-12-13',
-                replyArr:[
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]},
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]}
-                ]},
-              { u_id:1,
-                u_name:'Jong',
-                u_img:'../../static/image/qq/2018new_quantou_thumb.png',
-                d_content: '还打算打算建安说的很对卡视角',
-                d_time:'2018-12-13',
-                replyArr:[
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻符合时开发技术倒海翻翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]},
-                  {u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白',replyArrList:[{u_id:1,r_id:2,u_name:'空',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_content:'符合时开发技术倒海翻江可视电话',r_time:'2012-23-12',r_name:'白'},{u_id:1,r_id:2,u_name:'空',r_content:'符合时开发技术倒海翻江可视电话',u_img:'../../static/image/qq/2018new_quantou_thumb.png',r_time:'2012-23-12',r_name:'白'}]}
-                ]},
-            ]
+            prompt:'评论',
+            currentDId:{dId:null,name:undefined,r_heID:null,index:null,rr_id:null,i:null},
+            discussList:[]
           }
         },
       methods:{
+        init(){
+          this.btnName='评论';
+          this.inputContent='';
+          this.isQQShow=false;
+          this.isShow=false;
+          this.prompt='评论'
+        },
+        //修改成功弹框
+        set(msg){
+          this.$message({
+            message: msg,
+            type: 'success'
+          });
+        },
+        //错误弹框
+        error(msg){
+          this.$message.error(msg);
+        },
           //显示输入框
         changeShow(){
           this.isShow=true;
@@ -340,6 +248,135 @@
         //选择某个QQ表情
         checkList(index){
           this.inputContent = this.inputContent+'['+this.list[index].title+']';
+        },
+        //点击评论上的回复
+        respondent(index){
+          this.currentDId.dId=this.discussList[index].d_id;
+          this.currentDId.name=this.discussList[index].u_name;
+          this.currentDId.r_heID=this.discussList[index].u_id;
+          this.currentDId.index=index;
+          this.isShow=true;
+          this.prompt='回复：'+this.discussList[index].u_name;
+          this.btnName='回复';
+        },
+        //点击评论上的删除
+        removeDiscuss(index){
+          this.currentDId.dId=this.discussList[index].d_id;
+          this.$confirm('此操作将永久删除记录, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$axios({
+              method:'post',
+              url:'/api/removeDiscuss',
+              data:{
+                d_id:this.currentDId.dId,
+                p_id:this.currentTopic.p_id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                this.currentTopic.p_discuss=res.data.num;
+                this.discussList.splice(index,1);
+                console.log(res);
+              }
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+          console.log(this.currentDId.dId);
+        },
+        //点击回复上的回复
+        respondented(index,i){
+          this.currentDId.dId=this.discussList[index].d_id;
+          this.currentDId.name=this.discussList[index].replyArr[i].r_meName;
+          this.currentDId.r_heID=this.discussList[index].replyArr[i].r_meId;
+          this.currentDId.rr_id=this.discussList[index].replyArr[i].r_id;
+          this.currentDId.index=index;
+          this.currentDId.i=i;
+          this.isShow=true;
+          this.prompt='回复：'+this.currentDId.name;
+          this.btnName='回复';
+          console.log(this.currentDId);
+        },
+        //点击回复上的删除
+        removeReply(index,i){
+          this.currentDId.dId=this.discussList[index].d_id;
+          this.currentDId.rr_id=this.discussList[index].replyArr[i].r_id;
+          this.$confirm('此操作将永久删除记录, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$axios({
+              method:'post',
+              url:'/api/removeReply',
+              data:{
+                d_id:this.currentDId.dId,
+                p_id:this.currentTopic.p_id,
+                r_id:this.currentDId.rr_id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                this.currentTopic.p_discuss=res.data.num;
+                this.discussList[index].replyArr.splice(i,1);
+                console.log(res);
+              }
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        },
+        //点击回复回复上的删除
+        removeReplys(index,i,j){
+          this.$confirm('此操作将永久删除记录, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$axios({
+              method:'post',
+              url:'/api/removeReplyed',
+              data:{
+                p_id:this.discussList[index].p_id,
+                rr_id:this.discussList[index].replyArr[i].replyArrList[j].rr_id,
+                r_id:this.discussList[index].replyArr[i].replyArrList[j].r_id,
+              }
+            }).then(res=>{
+              console.log(res);
+              if(res.data.error){
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                this.currentTopic.p_discuss=res.data.num;
+                this.discussList[index].replyArr[i].replyArrList.splice(j,1);
+                console.log(res);
+              }
+            });
+
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+
+
         },
         //评论  回复
         reply(){
@@ -380,20 +417,155 @@
                   replyArr:[]
                 };
                 this.discussList.push(data);
+
+                this.currentTopic.p_discuss=res.data.num;
+                console.log(this.currentTopic,res.data);
+                this.set('评论成功!');
+                this.init();
+              }
+            })
+          }else if(this.btnName=='回复'&&this.currentDId.i==null){
+            console.log(this.inputContent);
+            const oDate1=new Date();
+            const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+            let data1={
+              p_id:this.currentTopic.p_id,
+              r_meId:this.userInfo.u_id,
+              r_heId:this.currentDId.r_heID,
+              r_meName:this.userInfo.u_name,
+              r_heName:this.currentDId.name,
+              r_time:oDate,
+              r_content:this.inputContent,
+              r_meSrc:this.userInfo.u_img,
+              d_id:this.currentDId.dId
+            };
+            this.$axios({
+              method:'post',
+              url:'/api/answer',
+              data:data1
+            }).then(res=>{
+              if(res.data.error){
+                const reg=/[[\u4e00-\u9fa5]+]/g;
+                this.inputContent=this.inputContent.replace(reg,(word)=>{
+                  const str=word.substring(1,word.length-1);
+                  this.list.forEach(v=>{
+                    if(v.title==str){
+                      word=v.src
+                    }
+                  });
+                  return '<img src="'+word+'">'
+                });
+                data1.r_id=res.data.data;
+                data1.r_content=this.inputContent;
+                data1.replyArrList=[];
+                this.inputContent='';
+                this.discussList[this.currentDId.index].replyArr.push(data1);
+                this.currentTopic.p_discuss=res.data.num;
+                this.set('回复成功！');
+                this.init();
+              }
+            })
+          }else{
+            //回复回复的
+            console.log(this.inputContent);
+            const oDate1=new Date();
+            const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+            let data1={
+              p_id:this.currentTopic.p_id,
+              r_meId:this.userInfo.u_id,
+              r_heId:this.currentDId.r_heID,
+              r_meName:this.userInfo.u_name,
+              r_heName:this.currentDId.name,
+              r_time:oDate,
+              r_content:this.inputContent,
+              r_meSrc:this.userInfo.u_img,
+              d_id:this.currentDId.dId,
+              rr_id:this.currentDId.rr_id
+            };
+            this.$axios({
+              method:'post',
+              url:'/api/answered',
+              data:data1
+            }).then(res=>{
+              console.log(res,'回复回复的');
+              if(res.data.error){
+                const reg=/[[\u4e00-\u9fa5]+]/g;
+                this.inputContent=this.inputContent.replace(reg,(word)=>{
+                  const str=word.substring(1,word.length-1);
+                  this.list.forEach(v=>{
+                    if(v.title==str){
+                      word=v.src
+                    }
+                  });
+                  return '<img src="'+word+'">'
+                });
+                data1.r_id=res.data.data;
+                data1.r_content=this.inputContent;
+                this.inputContent='';
+                this.discussList[this.currentDId.index].replyArr[this.currentDId.i].replyArrList.push(data1);
+                this.currentTopic.p_discuss=res.data.num;
+                this.set('回复成功！');
+                this.init();
               }
             })
           }
+        },
+        //点赞
+        zan(){
+          this.$axios({
+            method:'post',
+            url:'/api/like',
+            data:{
+              p_id:this.currentTopic.p_id,
+              u_id:this.userInfo.u_id
+            }
+          }).then(res=>{
+            if(res.data.error){
+              this.currentTopic.p_zan=res.data.num;
+              if(res.data.error==1){
+                this.set('取消点赞成功！');
+                this.$refs.zan.style.color='#b9b7be';
+              }else{
+                this.set('点赞成功！');
+                this.$refs.zan.style.color='#1e97a2';
+              }
+            }
+          })
+        },
+        //收藏
+        collect(){
+          this.$axios({
+            method:'post',
+            url:'/api/collect',
+            data:{
+              p_id:this.currentTopic.p_id,
+              u_id:this.userInfo.u_id
+            }
+          }).then(res=>{
+            if(res.data.error){
+              console.log(res);
+              this.currentTopic.p_collect=res.data.num;
+              if(res.data.error==1){
+                this.set('取消收藏！');
+                this.$refs.collect.style.color='#b9b7be';
+              }else{
+                this.set('收藏成功！');
+                this.$refs.collect.style.color='#1e97a2';
+              }
+            }
+          })
         }
       },
       mounted(){
           this.userInfo=this.$store.state.userInfo;
-          console.log(this.$route.params.id);
-          if(this.$route.params.id){
+          const currentTopicID=JSON.parse(localStorage.getItem('currentTopic'))||this.$route.params.id;
+          console.log(currentTopicID);
+          if(currentTopicID){
             this.$axios({
               method:'post',
               url:'/api/getTheTopic',
               data:{
-                id:this.$route.params.id
+                id:currentTopicID
               }
             }).then(res=>{
               if(res.data.error){
@@ -413,6 +585,119 @@
                 console.log(this.currentTopic)
               }
             });
+            //获取所有评论
+            this.$axios({
+              method:'post',
+              url:'/api/getAllComments',
+              data:{
+                id:currentTopicID
+              }
+            }).then(res=>{
+
+                if(res.data.error){
+                  let data=res.data.data;
+                  const reg=/[[\u4e00-\u9fa5]+]/g;
+                  data.forEach(v1=>{
+                    v1.replyArr=[];
+                    v1.d_content=v1.d_content.replace(reg,(word)=>{
+                      const str=word.substring(1,word.length-1);
+                      this.list.forEach(v=>{
+                        if(v.title==str){
+                          word=v.src
+                        }
+                      });
+                      return '<img src="'+word+'">'
+                    });
+                  });
+                  this.discussList=data;
+                  // console.log(this.discussList);
+                }
+            }).then(()=>{
+              console.log(this.discussList);
+              this.$axios({
+                method:'post',
+                url:'/api/getAllReplies',
+                data:{
+                  p_id:this.currentTopic.p_id
+                }
+              }).then(res=>{
+                console.log(res.data.data);
+                if(res.data.error){
+                    let data1=res.data.data;
+                    let data2=[];
+                    let data=[];
+                    data1.forEach(v=>{
+                      if(v.rr_id!=null){
+                        data2.push(v);
+                      }else{
+                        data.push(v);
+                      }
+                    });
+                    const reg=/[[\u4e00-\u9fa5]+]/g;
+                    data.forEach((v,i)=>{
+                      v.replyArrList=[];
+                      v.r_content=v.r_content.replace(reg,(word)=>{
+                        const str=word.substring(1,word.length-1);
+                        this.list.forEach(v=>{
+                          if(v.title==str){
+                            word=v.src
+                          }
+                        });
+                        return '<img src="'+word+'">'
+                      });
+                      this.discussList.forEach(v1=>{
+                        if(v.d_id==v1.d_id&&v1.rr_id==null){
+                          v1.replyArr.push(v);
+                        }
+                      });
+                    });
+                  data2.forEach(v=>{
+                    this.discussList.forEach(v1=>{
+                      v1.replyArr.forEach(v2=>{
+                        if(v2.r_id==v.rr_id){
+                          v2.replyArrList.push(v);
+                        }
+                      })
+                    })
+                  });
+                  this.currentTopic.p_discuss=res.data.num;
+                  console.log(this.discussList);
+                  console.log(data2);
+                }
+              })
+            });
+            this.$axios({
+              method:'post',
+              url:'/api/findLike',
+              data:{
+                p_id:currentTopicID,
+                u_id:this.userInfo.u_id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                if(res.data.zan){
+                  this.$refs.zan.style.color='#1e97a2';
+                }else{
+                  this.$refs.zan.style.color='#b9b7be';
+                }
+              }
+            });
+            this.$axios({
+              method:'post',
+              url:'/api/findCollect',
+              data:{
+                p_id:currentTopicID,
+                u_id:this.userInfo.u_id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                if(res.data.collect){
+                  this.$refs.collect.style.color='#1e97a2';
+                }else{
+                  this.$refs.collect.style.color='#b9b7be';
+                }
+              }
+            })
           }
       }
     }

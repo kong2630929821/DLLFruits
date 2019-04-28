@@ -363,6 +363,7 @@
           }else{
             id= this.listThree[j].p_id;
           }
+          localStorage.setItem('currentTopic',JSON.stringify(id));
           this.$router.push({name:'information',params:{id}});
         }
       },
