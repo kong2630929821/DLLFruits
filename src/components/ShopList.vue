@@ -16,14 +16,14 @@
         </ul>
         <div class="shop-list">
           <ol>
-            <li v-for="(v,i) in shopList" :key="i" :shop="v.id" @click="productDetails">
-              <img :src="v.src" alt="">
-              <p class="title">{{v.name}}</p>
-              <p class="pice">￥{{v.pice}}</p>
+            <li v-for="(v,i) in shopList" :key="i" :shop="v.s_id" @click="productDetails(i)">
+              <img :src="v.s_img" alt="">
+              <p class="title">{{v.s_name}}</p>
+              <p class="pice">￥{{v.s_price}}</p>
               <div class="inf">
-                <div class="left">已售{{v.sold}}</div>
+                <div class="left">已售{{v.s_sold}}</div>
                 <div class="cen">|</div>
-                <div class="right">喜欢{{v.love}}</div>
+                <div class="right">喜欢{{v.s_love}}</div>
               </div>
             </li>
           </ol>
@@ -60,84 +60,66 @@
             i:0,
             items:['进口水果','国内水果','乳品糕点','方便速食','坚果专区','干货珍菌'],
             arr:['../../static/image/banner/banner1.jpg','../../static/image/banner/banner2.jpg','../../static/image/banner/banner3.jpg','../../static/image/banner/banner12.jpg','../../static/image/banner/banner5.jpg','../../static/image/banner/banner6.jpg'],
-            shopList:[
-              {
-                src:'../../static/image/shop/1.jpg',
-                id:1,
-                name:'赣南脐橙',
-                pice:'123.00',
-                sold:12,
-                love:123
-                },
-              {
-                src:'../../static/image/shop/2.jpg',
-                id:2,
-                name:'海南红心火龙果',
-                pice:'123.00',
-                sold:12,
-                love:123
-              },
-              {
-                src:'../../static/image/shop/3.jpg',
-                id:3,
-                name:'美国华盛顿青蛇果',
-                pice:'43.00',
-                sold:112,
-                love:223
-              },
-              {
-                src:'../../static/image/shop/4.jpg',
-                id:4,
-                name:'美国姬娜果 ',
-                pice:'45.00',
-                sold:22,
-                love:13
-              },
-              {
-                src:'../../static/image/shop/5.jpg',
-                id:5,
-                name:'日本白草莓菠萝莓',
-                pice:'25.00',
-                sold:212,
-                love:133
-              },
-              {
-                src:'../../static/image/shop/6.jpg',
-                id:6,
-                name:'马来西亚猫山王榴莲',
-                pice:'55.00',
-                sold:212,
-                love:133
-              },
-              {
-                src:'../../static/image/shop/7.jpg',
-                id:7,
-                name:'哥伦比亚热情果',
-                pice:'65.00',
-                sold:2212,
-                love:1233
-              },
-              {
-                src:'../../static/image/shop/8.jpg',
-                id:8,
-                name:'云南雪莲果',
-                pice:'85.00',
-                sold:1212,
-                love:4433
-              }
-              ]
+            shopList:[]//水果列表
           }
         },
         methods:{
           //切换水果类型
           checkType(index){
-             this.i = index;
+            this.$axios({
+              method:'post',
+              url:'/api/shopList',
+              data:{
+                type:index+1
+              }
+            }).then(res=>{
+              if(res.data.error){
+                let shopListData=res.data.data;
+                if(shopListData.length){
+                  shopListData.forEach(v=>{
+                    v.s_infoImg=v.s_infoImg.split('|');
+                    v.s_minImg=v.s_minImg.split('|');
+                    v.s_maxImg=v.s_maxImg.split('|');
+                    v.s_showMax=v.s_showMax.split('|');
+                  });
+                  console.log(shopListData);
+                  this.shopList=shopListData;
+                  this.i = index;
+                }
+              }
+            });
+
           },
           //进入水果详情购买页面
-          productDetails(){
-            this.$router.replace({path:'productDetails'});
+          productDetails(index){
+            localStorage.setItem('currentShop',JSON.stringify(this.shopList[index]));
+            this.$router.push({name:'productDetails',params:{data:this.shopList[index]}});
           }
-        }
+        },
+      mounted(){
+          //获取默认种类的数据
+          this.$axios({
+            method:'post',
+            url:'/api/shopList',
+            data:{
+              type:1
+            }
+          }).then(res=>{
+            if(res.data.error){
+              let shopListData=res.data.data;
+              if(shopListData.length){
+                shopListData.forEach(v=>{
+                  v.s_infoImg=v.s_infoImg.split('|');
+                  v.s_minImg=v.s_minImg.split('|');
+                  v.s_maxImg=v.s_maxImg.split('|');
+                  v.s_showMax=v.s_showMax.split('|');
+                });
+                console.log(shopListData);
+                this.shopList=shopListData;
+              }
+            }
+          })
+      }
     }
 </script>
 

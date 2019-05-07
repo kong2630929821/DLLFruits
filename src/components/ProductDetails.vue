@@ -1,44 +1,45 @@
-<!-- ProductDetails -->
 <template>
   <div class="detail">
     <div class="detailTop">
       <div class="detailTop-img">
         <div id="moveLeft" @mouseenter="enter" @mouseleave="leave" @mousemove="move">
-          <img class="maxImg" :src="detailInfo.maxImg[i]" alt="">
-          <span id="moveSpan"></span>
+          <img class="maxImg" :src="detailInfo.s_maxImg[i]" alt="">
+          <span id="moveSpan" v-show="showMaxImg"></span>
         </div>
         <ul class="minList">
-          <li v-for="(item,index) in detailInfo.minImg" :key="index" @click="changeCurrent(index)" :class="{'current':i==index}"><img :src="item" alt=""></li>
+          <li v-for="(item,index) in detailInfo.s_minImg" :key="index" @click="changeCurrent(index)" :class="{'current':i==index}">
+            <img :src="item" alt="">
+          </li>
         </ul>
         <div class="detailTop-img-collect">
-          <p class="love"><strong class="fa fa-star-o u1"></strong>&nbsp;&nbsp;收藏商品 （{{detailInfo.love}}人气）</p>
-          <p class="sold"><strong class="fa fa-star-o u1"></strong>&nbsp;&nbsp;已卖商品 （{{detailInfo.sold}}人气）</p>
+          <p class="love"><strong class="fa fa-star-o u1"></strong>&nbsp;&nbsp;收藏商品 （{{detailInfo.s_love}}人气）</p>
+          <p class="sold"><strong class="fa fa-star-o u1"></strong>&nbsp;&nbsp;已卖商品 （{{detailInfo.s_sold}}人气）</p>
         </div>
       </div>
       <div class="detailTop-content">
         <div id="moveRight" class="maximg" v-show="showMaxImg">
-          <img id="moveImg" src="../../static/image/detail/1.max.jpg" :style="{left:moveX+'px',top:moveY+'px'}" alt="">
+          <img id="moveImg" :src="detailInfo.s_showMax[i]" :style="{left:moveX+'px',top:moveY+'px'}" alt="">
         </div>
-        <p class="content-title">{{detailInfo.name}}</p>
+        <p class="content-title">{{detailInfo.s_name}}</p>
         <div class="content-info">
           <div class="content-info-top">此商品5月13开售，请提前加购</div>
           <ul>
-            <li>价格：¥&nbsp;<span>{{detailInfo.price+21.5}}</span></li>
-            <li>促销价：<b>¥</b><h2>{{detailInfo.price}}</h2><img src="../../static/image/detail/new.png" alt=""></li>
-            <li>亲子价：<b>¥</b><strong>{{detailInfo.price}}</strong></li>
+            <li>价格：¥&nbsp;<span>{{detailInfo.s_price+21.5}}</span></li>
+            <li>促销价：<b>¥</b><h2>{{detailInfo.s_price}}</h2><img src="../../static/image/detail/new.png" alt=""></li>
+            <li>亲子价：<b>¥</b><strong>{{detailInfo.s_price}}</strong></li>
           </ul>
           <div class="content-info-center">运费<span>四川成都至 湖南-永州市 快递: 0.00</span></div>
           <div class="content-info-center-1">
-              <div class="haveBorder">收藏量<span>{{detailInfo.love}}</span></div>
-              <div class="haveBorder">销售量<span>{{detailInfo.sold}}</span></div>
-              <div>累计评价<span>{{detailInfo.evaluate}}</span></div>
+              <div class="haveBorder">收藏量<span>{{detailInfo.s_love}}</span></div>
+              <div class="haveBorder">销售量<span>{{detailInfo.s_sold}}</span></div>
+              <div>累计评价<span>{{evaluateList.length}}</span></div>
           </div>
           <div class="content-info-sum">
             <span>数量</span>
             <div class="controller">
-              <el-input-number v-model="sum" :min="1" label="描述文字"></el-input-number>&nbsp;件
+              <el-input-number v-model="sum" :min="1" :max="detailInfo.s_num" label="描述文字"></el-input-number>&nbsp;件
             </div>
-            <span>库存{{detailInfo.stock}}件</span>
+            <span>库存{{detailInfo.s_num}}件</span>
           </div>
           <div class="shopBtnBox">
             <div class="shopBoxBtn1">立即购买</div>
@@ -68,7 +69,7 @@
         <div class="info-right-top">
           <ul>
             <li @click="commodityDetails(1)" :class="parameter?'isActive':''">商品详情</li>
-            <li @click="commodityDetails(2)" :class="parameter?'':'isActive'">累计评价 <span>{{detailInfo.evaluate}}</span></li>
+            <li @click="commodityDetails(2)" :class="parameter?'':'isActive'">累计评价 <span>{{evaluateList.length}}</span></li>
           </ul>
         </div>
         <div v-show="parameter" class="attributes-list">
@@ -82,30 +83,32 @@
             <li>保质期：5天</li>
             <li>食品添加剂：无</li>
             <li>品牌：果思</li>
-            <li>价格：{{detailInfo.price}}元</li>
-            <li>产地：{{detailInfo.nationality}}</li>
-            <li>省份：{{detailInfo.province}}</li>
-            <li>城市：{{detailInfo.city}}</li>
+            <li>价格：{{detailInfo.s_price}}元</li>
+            <li>产地：{{detailInfo.s_information}}</li>
+            <li>省份：四川省</li>
+            <li>城市：成都市</li>
             <li>是否为有机食品：否</li>
             <li>包装方式：散装</li>
             <li>售卖方式：单品</li>
             <li>套餐分量：3人份</li>
             <li>套餐周期：1周</li>
             <li>配送频次：1周2次</li>
-            <li>水果种类：{{detailInfo.name}}</li>
+            <li>水果种类：{{detailInfo.s_name}}</li>
           </ul>
         </div>
         <div v-show="parameter" class="infoImg-list">
-          <img v-for="(v,index) in listImg" :key="index" :src="v" alt="">
+          <div v-for="(item,index) in detailInfo.s_infoImg" :key="index">
+            <img :src="item" alt="">
+          </div>
         </div>
         <div v-show="!parameter" class="parameter" v-for="(v,index) in evaluateList" :key="index">
           <p class="parameter-title">{{v.u_name}}：</p>
-          <p class="title-time">{{v.time}}</p>
-          <div class="parameter-content">{{v.content}}</div>
+          <p class="title-time">{{v.e_time}}</p>
+          <div class="parameter-content">{{v.e_content}}</div>
           <div class="rate">
-            <p>商品评分：<el-rate v-model="v.rate.shop"></el-rate></p>
-            <p>服务评分：<el-rate v-model="v.rate.server"></el-rate></p>
-            <p>物流评分：<el-rate v-model="v.rate.goods"></el-rate></p>
+            <p>商品评分：<el-rate v-model="v.e_rate.shop"></el-rate></p>
+            <p>服务评分：<el-rate v-model="v.e_rate.server"></el-rate></p>
+            <p>物流评分：<el-rate v-model="v.e_rate.goods"></el-rate></p>
           </div>
         </div>
       </div>
@@ -131,39 +134,42 @@ export default {
 name:'ProductDetails',
   data () {
     return {
-        detailInfo:{
-          id:1,
-          name:'海南红心火龙果',
-          price:123.00,
-          sold:12,
-          love:123,
-          stock:1222,
-          evaluate:1300,//评价
-          province:'四川省',
-          city:'成都市',
-          nationality:'中国',
-          maxImg:['../../static/image/detail/1.jpg','../../static/image/detail/2.jpg','../../static/image/detail/3.jpg','../../static/image/detail/4.jpg','../../static/image/detail/1.jpg'],
-          minImg:['../../static/image/detail/1.min.jpg','../../static/image/detail/2.min.jpg','../../static/image/detail/3.min.jpg','../../static/image/detail/4.min.jpg','../../static/image/detail/1.min.jpg']
-          },//商品详情页面
+        detailInfo:{},//商品详情页面
         i:0,//商品默认大图展示
         sum:1,//商品的数量
-        listImg:['../../static/image/detail/list1.jpg','../../static/image/detail/list2.jpg','../../static/image/detail/list3.jpg','../../static/image/detail/list4.jpg','../../static/image/detail/list5.jpg'],//商品详情照片
         parameter:true,//默认显示产品参数
-        evaluateList:[
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'},
-          {id:1,u_id:1,u_name:'君莫笑',time:'2019-4-18', rate:{shop:5, server:5, goods:5},content:'东西到了，也很惊喜，包装足够了！里面的东西都没有瑕疵，开心！同事看我买了水果都过来看哈哈哈别的办公室的也过来看了，都说还不错，很值，比超市便宜多了，超市的大小不均匀，还会有黑心点子，还送货上门，完美！我拿出来2个用刀子切开大家尝了尝，我也自己吃了点，说实话，我一直喜欢吃苹果，超市也好，小摊也好买过不少，这个尝了尝确实不错！很正的甜甜的味道！同事尝了也说不错，对得起这个价格！'}
-        ],//产品评价列表
+        evaluateList:[],//产品评价列表
         moveX:0,
         moveY:0,//图片放大移动的X，Y坐标
         showMaxImg:false,//是否展示大图
     };
+  },
+  mounted(){
+    const dataList=JSON.parse(localStorage.getItem('currentShop'))||this.$route.params.data;
+    this.detailInfo=dataList;
+    console.log('11111111111',this.detailInfo);
+    this.$axios({
+      method:'post',
+      url:'/api/getEvaluate',
+      data:{
+        s_id:dataList.s_id
+      }
+    }).then(res=>{
+      if(res.data.error){
+        let data1=res.data.data;
+        if(data1.length){
+          data1.forEach(v=>{
+            let rate=v.e_rate.split('');
+            v.e_rate={
+              shop:Math.floor(rate[0]),
+              server:Math.floor(rate[1]),
+              goods:Math.floor(rate[2]),
+            }
+          });
+          this.evaluateList=data1;
+        }
+      }
+    })
   },
   methods:{
   //详情图片的切换
@@ -171,8 +177,8 @@ name:'ProductDetails',
     this.i=index;
   },
   //商品详情和评价的切换
-  commodityDetails(index){
-    if(index==1){
+  commodityDetails(current){
+    if(current===1){
       this.parameter=true;
     }else{
       this.parameter=false;
@@ -207,7 +213,6 @@ name:'ProductDetails',
     }
     oSpan.style.left=l+'px';
     oSpan.style.top=t+'px';
-    console.log(l,t);
     this.moveX=-oSpan.offsetLeft*(oImg.offsetWidth-oDivR.offsetWidth)/(oDivL.offsetWidth-oSpan.offsetWidth);
     this.moveY=-oSpan.offsetTop*(oImg.offsetHeight-oDivR.offsetHeight)/(oDivL.offsetHeight-oSpan.offsetHeight);
   }
@@ -300,6 +305,7 @@ name:'ProductDetails',
     .detailTop-img-collect{
       width: 418px;
       height: 32px;
+      margin-top: 110px;
       line-height: 32px;
       font-size: 12px;
       color: #999;

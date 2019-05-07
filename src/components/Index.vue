@@ -230,7 +230,9 @@
            }).then((res)=>{
              if(res.data.error){
                console.log(res);
-               alert('登入成功');
+               this.open2('登录成功！');
+             }else{
+               this.open3('手机号或验证码错误！');
              }
            });
          }else{
@@ -257,6 +259,8 @@
                     this.inputCode='';
                   }
                 })
+            }else{
+              this.open3('账号或密码为空！');
             }
          }
         },
