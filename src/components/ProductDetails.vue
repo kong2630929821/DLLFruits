@@ -42,7 +42,7 @@
             <span>库存{{detailInfo.s_num}}件</span>
           </div>
           <div class="shopBtnBox">
-            <div class="shopBoxBtn1">立即购买</div>
+            <div class="shopBoxBtn1" @click="buy">立即购买</div>
             <div class="shopBoxBtn2">加入购物车</div>
           </div>
           <div class="writeBox">服务承诺&nbsp;&nbsp;不支持七天无理由退换&nbsp;&nbsp;坏单包退&nbsp;&nbsp;极速退款</div>
@@ -215,7 +215,31 @@ name:'ProductDetails',
     oSpan.style.top=t+'px';
     this.moveX=-oSpan.offsetLeft*(oImg.offsetWidth-oDivR.offsetWidth)/(oDivL.offsetWidth-oSpan.offsetWidth);
     this.moveY=-oSpan.offsetTop*(oImg.offsetHeight-oDivR.offsetHeight)/(oDivL.offsetHeight-oSpan.offsetHeight);
-  }
+  },
+  //立即购买
+    buy(){
+      console.log(this.sum);
+      const oDate1=new Date();
+      const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+      console.log(oDate);
+      this.$axios({
+        method:'post',
+        url:'/api/bugShopping',
+        data:{
+          s_id:this.detailInfo.s_id,
+          u_id:this.$store.state.userInfo.u_id,
+          o_time:oDate,
+          o_num:this.sum,
+          o_price:this.detailInfo.s_price
+        }
+      }).then(res=>{
+        if(res.data.error){
+         if(res.data.data){
+           this.$router.push({name:'myself',params:{index:1,id:res.data.data}});
+         }
+        }
+      })
+    }
 }
 }
 

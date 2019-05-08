@@ -689,55 +689,7 @@
             radio:0,//选择的收货地址
             edit:true,//编辑资料
             inputNum:1,//商品数量
-            shoppingCart: [{
-              id: '12987122',
-              name: '好滋好味鸡蛋仔',
-              category: '江浙小吃、小吃零食',
-              desc: '荷兰优质淡奶，奶香浓而不腻',
-              address: '上海市普陀区真北路',
-              shop: '王小虎夫妻店',
-              shopId: '10333',
-              time:'2019-4-17',
-              img:'../../static/image/shop/2.jpg',
-              price:120,
-              sum:1
-            }, {
-              id: '12987123',
-              name: '好滋好味鸡蛋仔',
-              category: '江浙小吃、小吃零食',
-              desc: '荷兰优质淡奶，奶香浓而不腻',
-              address: '上海市普陀区真北路',
-              shop: '王小虎夫妻店',
-              shopId: '10333',
-              time:'2019-4-15',
-              img:'../../static/image/shop/2.jpg',
-              price:120,
-              sum:1
-            }, {
-              id: '12987125',
-              name: '好滋好味鸡蛋仔',
-              category: '江浙小吃、小吃零食',
-              desc: '荷兰优质淡奶，奶香浓而不腻',
-              address: '上海市普陀区真北路',
-              shop: '王小虎夫妻店',
-              shopId: '10333',
-              time:'2019-4-15',
-              img:'../../static/image/shop/2.jpg',
-              price:120,
-              sum:2
-            }, {
-              id: '12987126',
-              name: '好滋好味鸡蛋仔',
-              category: '江浙小吃、小吃零食',
-              desc: '荷兰优质淡奶，奶香浓而不腻',
-              address: '上海市普陀区真北路',
-              shop: '王小虎夫妻店',
-              shopId: '10333',
-              time:'2019-4-16',
-              img:'../../static/image/shop/2.jpg',
-              price:10,
-              sum:2
-            }],//购物车列表
+            shoppingCart: [],//购物车列表
             total:0,//合计
             totalPeding:0,//待支付合计
             active: 1,//步骤条
@@ -784,7 +736,36 @@
         this.address=this.$store.state.address;
         //获取显示哪个版块
         this.i=this.$route.params.index||0;
-        console.log(this.$route.params.index);
+        //获取所有购物车数据
+        this.$axios({
+          method:'post',
+          url:'/api/getShoppingCar',
+          data:{
+            u_id:this.userInfo.u_id
+          }
+        }).then(res=>{
+          if(res.data.error){
+            this.shoppingCart=res.data.data;
+            //直接购买
+            if(this.$route.params.id){
+              this.pay=true;
+              this.shoppingList.push(this.shoppingCart[0]);
+            }
+          }
+        });
+        //获取待支付的数据
+        this.$axios({
+          method:'post',
+          url:'/api/getPendingPayment',
+          data:{
+            u_id:this.userInfo.u_id
+          }
+        }).then(res=>{
+          if(res.data.error){
+            this.pendingPayment=res.data.data;
+          }
+        });
+        console.log(this.shoppingCart);
         console.log(this.userInfo);
         let that=this;
         let oFile=document.querySelector('#file1');
@@ -1082,6 +1063,10 @@
             this.isAddress=false;
             console.log(this.$store.state.address);
           }else{
+            //添加地址
+            this.$axios({
+
+            });
             this.aAddress.id=2;
             this.aAddress.u_id=2;
             this.$store.commit('addAddress',this.aAddress);
@@ -1119,7 +1104,7 @@
                 v.receiptArea=this.address[this.radio].area;
                 v.receiptDetailed=this.address[this.radio].detailed;
               });
-              console.log(this.payList);
+              console.log(this.address[this.radio]);
               break;
             case 2:
               break;
@@ -1131,21 +1116,55 @@
                 background: 'rgba(0, 0, 0, 0.7)'
               });
               setTimeout(() => {
-                loading.close();
-                this.set('支付成功，请注意查收！');
-              }, 2000);
-              //清空购物车
-              for(let j=0;j<this.shoppingList.length;j++){
-                for(let k=0;k<this.shoppingCart.length;k++){
-                  if(this.shoppingList[j].id==this.shoppingCart[k].id){
-                    this.shoppingCart.splice(k,1);
+                this.$axios({
+                  method:'post',
+                  url:'/api/payMoney',
+                  data:{
+                    password:this.inputPayPass,
+                    u_id:this.userInfo.u_id
                   }
-                }
-              }
-              this.receiptList.push(...this.shoppingList);//待收货
-              this.pay=false;
-              this.active=1;
-              return;
+                }).then(res=>{
+                  if(res.data.error){
+                    //生成订单
+                    const oDate1=new Date();
+                    const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+                    console.log(oDate);
+                    this.$axios({
+                      method:'post',
+                      url:'/api/pendingGoods',
+                      data:{
+                        goods:this.shoppingList,
+                        u_id:this.userInfo.u_id,
+                        time:oDate
+                      }
+                    }).then(res=>{
+                      if(res.data.error){
+                        //支付成功
+                        loading.close();
+                        this.set('支付成功，请注意查收！');
+                      }
+                    });
+                    //清空购物车
+                    for(let j=0;j<this.shoppingList.length;j++){
+                      for(let k=0;k<this.shoppingCart.length;k++){
+                        if(this.shoppingList[j].id==this.shoppingCart[k].id){
+                          this.shoppingCart.splice(k,1);
+                        }
+                      }
+                    }
+                    this.receiptList.push(...this.shoppingList);//待收货
+                    this.pay=false;
+                    this.active=1;
+                    return;
+                  }else{
+                    //支付失败
+                    loading.close();
+                    this.error('密码错误！');
+                    this.active--;
+                  }
+                });
+
+              }, 2000);
               break;
           }
           this.active++;
@@ -1160,16 +1179,33 @@
         //关闭付款
         closePay(){
           if(this.active==3){
+            //生成带付款
+            const oDate1=new Date();
+            const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+            console.log(this.shoppingList);
+            this.$axios({
+              method:'post',
+              url:'/api/pendingPayment',
+              data:{
+                goods:this.shoppingList,
+                u_id:this.userInfo.u_id,
+                time:oDate
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.set('订单添加到待付款中！');
                 //清空购物车
-              for(let j=0;j<this.shoppingList.length;j++){
-                for(let k=0;k<this.shoppingCart.length;k++){
-                  if(this.shoppingList[j].id==this.shoppingCart[k].id){
-                    this.shoppingCart.splice(k,1);
+                for(let j=0;j<this.shoppingList.length;j++){
+                  for(let k=0;k<this.shoppingCart.length;k++){
+                    if(this.shoppingList[j].id==this.shoppingCart[k].id){
+                      this.shoppingCart.splice(k,1);
+                    }
                   }
                 }
+                //添加到待付款
+                this.pendingPayment.push(...this.shoppingList);
               }
-              //添加到待付款
-              this.pendingPayment.push(...this.shoppingList);
+            });
           }
           this.pay=false;
           this.active=1;
