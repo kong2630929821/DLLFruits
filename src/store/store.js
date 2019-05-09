@@ -14,19 +14,7 @@ const store = new Vuex.Store({
       // img:'',
       // money:5000
     },
-    address:JSON.parse(localStorage.getItem('address'))||[
-      {
-        id:1,
-        u_id:1,
-        name:'君莫笑',
-        mail:'2630929821@qq.com',
-        phone:'17774645192',
-        province:'四川省',
-        city:'成都市',
-        area:'双流区',
-        detailed:'长城馨苑'
-      }
-    ]
+    address:JSON.parse(localStorage.getItem('address'))||[]
   },
   mutations:{
     //修改个人信息

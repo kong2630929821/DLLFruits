@@ -43,7 +43,7 @@
           </div>
           <div class="shopBtnBox">
             <div class="shopBoxBtn1" @click="buy">立即购买</div>
-            <div class="shopBoxBtn2">加入购物车</div>
+            <div class="shopBoxBtn2" @click="addShoppingCar">加入购物车</div>
           </div>
           <div class="writeBox">服务承诺&nbsp;&nbsp;不支持七天无理由退换&nbsp;&nbsp;坏单包退&nbsp;&nbsp;极速退款</div>
         </div>
@@ -184,6 +184,16 @@ name:'ProductDetails',
       this.parameter=false;
     }
   },
+    //修改成功弹框
+    set(msg){
+      this.$message({
+        message: msg,
+        type: 'success'
+      });
+    },
+    error(msg){
+      this.$message.error(msg);
+    },
   //鼠标移入图片显示大图
   enter(){
     this.showMaxImg=true;
@@ -218,7 +228,43 @@ name:'ProductDetails',
   },
   //立即购买
     buy(){
-      console.log(this.sum);
+    console.log(this.detailInfo);
+      this.$axios({
+        method:'post',
+        url:'/api/getShoppingNums',
+        data:{
+          goods:this.detailInfo,
+          num:this.sum
+        }
+      }).then(res=>{
+        if(res.data.error){
+          const oDate1=new Date();
+          const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+          console.log(oDate);
+          this.$axios({
+            method:'post',
+            url:'/api/bugShopping',
+            data:{
+              s_id:this.detailInfo.s_id,
+              u_id:this.$store.state.userInfo.u_id,
+              o_time:oDate,
+              o_num:this.sum,
+              o_price:this.detailInfo.s_price
+            }
+          }).then(res=>{
+            if(res.data.error){
+              if(res.data.data){
+                this.$router.push({name:'myself',params:{index:1,id:res.data.data}});
+              }
+            }
+          })
+        }else{
+          this.error('商品库存不够！');
+        }
+      })
+    },
+    //添加到购物车
+    addShoppingCar(){
       const oDate1=new Date();
       const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
       console.log(oDate);
@@ -234,9 +280,9 @@ name:'ProductDetails',
         }
       }).then(res=>{
         if(res.data.error){
-         if(res.data.data){
-           this.$router.push({name:'myself',params:{index:1,id:res.data.data}});
-         }
+          if(res.data.data){
+            this.set('添加购物车成功！');
+          }
         }
       })
     }

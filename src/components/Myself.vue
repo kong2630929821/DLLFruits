@@ -16,7 +16,7 @@
               <div class="pay-top-2">填写收货地址</div>
               <div class="address">
                 <ul>
-                  <li v-for="(v,index) in address" :key="index">
+                  <li v-for="(v,index) in address" :key="index" v-show="address.length">
                     <el-radio v-model="radio" :label="index">{{v.province}}&nbsp;{{v.city}}&nbsp;{{v.name}}&nbsp;{{v.phone}}&nbsp;</el-radio>
                     <span @click="changeAdd(index)"> &nbsp;修改</span>
                     <span> | </span>
@@ -157,7 +157,7 @@
         <div class="discussBox">
           <div class="orderTime">
             <p>下单时间：<span>{{discuss.time}}</span></p>
-            <p>卖家：<span>果思自营</span></p>
+            <p class="mai">卖家：<span>果思自营</span></p>
             <b @click="closeDiscuss">×</b>
           </div>
           <div class="orderContent">
@@ -366,7 +366,7 @@
               <el-table-column
                 label="数量">
                 <template slot-scope="scope">
-                  <el-input-number v-model="scope.row.sum" @change="handleChange(scope.$index, scope.row)" :min="1" label="描述文字"></el-input-number>
+                  <el-input-number v-model="scope.row.sum" @change="handleChange(scope.$index, scope.row)" :min="1" :max="scope.row.shopNum" label="描述文字"></el-input-number>
                 </template>
               </el-table-column>
               <el-table-column
@@ -736,6 +736,34 @@
         this.address=this.$store.state.address;
         //获取显示哪个版块
         this.i=this.$route.params.index||0;
+        //获取所有收货地址
+        this.$axios({
+          method:'post',
+          url:'/api/getAllAddress',
+          data:{
+            u_id:this.userInfo.u_id
+          }
+        }).then(res=>{
+          if(res.data.error){
+            let addressList=res.data.data;
+            let dataList=[];
+            addressList.forEach(v=>{
+              let address={
+                id:v.a_id,
+                u_id:v.u_id,
+                name:v.a_name,
+                mail:v.a_mail,
+                phone:v.a_phone,
+                province:v.a_province,
+                city:v.a_city,
+                area:v.a_area,
+                detailed:v.a_detailed
+              };
+              dataList.push(address);
+            });
+            localStorage.setItem('address',JSON.stringify(dataList));
+          }
+        });
         //获取所有购物车数据
         this.$axios({
           method:'post',
@@ -763,6 +791,42 @@
         }).then(res=>{
           if(res.data.error){
             this.pendingPayment=res.data.data;
+          }
+        });
+        //获取待收货的数据
+        this.$axios({
+          method:'post',
+          url:'/api/getAllPendingReceipt',
+          data:{
+            u_id:this.userInfo.u_id
+          }
+        }).then(res=>{
+            if(res.data.error){
+              this.receiptList=res.data.data;
+            }
+        });
+        //获取所有评价列表
+        this.$axios({
+          method:'post',
+          url:'/api/getAllShoppingEvaluate',
+          data:{
+            u_id:this.userInfo.u_id
+          }
+        }).then(res=>{
+          if(res.data.error){
+            this.assessList=res.data.data
+          }
+        });
+        //获取所有售后列表
+        this.$axios({
+          method:'post',
+          url:'/api/getAllShoppingRefund',
+          data:{
+            u_id:this.userInfo.u_id
+          }
+        }).then(res=>{
+          if(res.data.error){
+            this.refundList=res.data.data
           }
         });
         console.log(this.shoppingCart);
@@ -941,11 +1005,22 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
+            this.$axios({
+              method:'post',
+              url:'/api/removeShoppingCar',
+              data:{
+                o_id:row.id,
+                u_id:this.userInfo.u_id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                this.shoppingCart.splice(index,1);
+              }
             });
-            this.shoppingCart.splice(index,1);
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -961,11 +1036,24 @@
             cancelButtonText: '取消',
             type: 'warning'
           }).then(() => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
+            //删除待支付商品
+            this.$axios({
+              method:'post',
+              url:'/api/removePedding',
+              data:{
+                u_id:this.userInfo.u_id,
+                v_id:row.id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                this.pendingPayment.splice(index,1);
+              }
             });
-            this.pendingPayment.splice(index,1);
+
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -975,17 +1063,29 @@
         },
         //签收已付款的商品
         signing(index,row){
+            console.log(row);
           this.$confirm('签收此商品, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '签收成功，感谢支持!'
-          });
-          this.receiptList.splice(index,1);
-          this.assessList.push(row);
+          this.$axios({
+            method:'post',
+            url:'/api/signing',
+            data:{
+              u_id:this.userInfo.u_id,
+              v_id:row.id
+            }
+          }).then(res=>{
+            if(res.data.error){
+              this.$message({
+                type: 'success',
+                message: '签收成功，感谢支持!'
+              });
+              this.receiptList.splice(index,1);
+              this.assessList.push(row);
+            }
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -1000,12 +1100,23 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '已成功申请，感谢支持!'
-          });
-          this.receiptList.splice(index,1);
-          this.refundList.push(row);
+            this.$axios({
+              method:'post',
+              url:'/api/refund',
+              data:{
+                u_id:this.userInfo.u_id,
+                v_id:row.id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.$message({
+                  type: 'success',
+                  message: '已成功申请，感谢支持!'
+                });
+                this.receiptList.splice(index,1);
+                this.refundList.push(row);
+              }
+            });
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -1059,19 +1170,45 @@
               index:this.isChangeAdd,
               content:this.aAddress
             };
-            this.$store.commit('changeAddress',data);
-            this.isAddress=false;
-            console.log(this.$store.state.address);
+            this.$axios({
+              method:'post',
+              url:'/api/getChangeAddress',
+              data:this.aAddress
+            }).then(res=>{
+              if(res.data.error){
+                this.set('修改收货地址成功！');
+                this.$store.commit('changeAddress',data);
+                this.isAddress=false;
+                console.log(this.$store.state.address);
+              }
+            })
+
           }else{
             //添加地址
+            console.log(this.aAddress);
             this.$axios({
-
+              method:'post',
+              url:'/api/getAddress',
+              data:{
+                u_id:this.userInfo.u_id,
+                name:this.aAddress.name,
+                mail:this.aAddress.mail,
+                phone:this.aAddress.phone,
+                province:this.aAddress.province,
+                city:this.aAddress.city,
+                area:this.aAddress.area,
+                detailed:this.aAddress.detailed
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.set('添加收货地址成功!');
+                this.aAddress.id=res.data.data;
+                this.aAddress.u_id=this.userInfo.u_id;
+                this.$store.commit('addAddress',this.aAddress);
+                this.isAddress=false;
+                console.log(this.$store.state.address);
+              }
             });
-            this.aAddress.id=2;
-            this.aAddress.u_id=2;
-            this.$store.commit('addAddress',this.aAddress);
-            this.isAddress=false;
-            console.log(this.$store.state.address);
           } 
         },
         //修改地址
@@ -1083,15 +1220,27 @@
         },
         //删除地址
         removeAdd(index){
-          this.address.splice(index,1);
-          this.$store.commit('removeAddress',this.address);
-          console.log(this.$store.state.address);
+          this.$axios({
+            method:'post',
+            url:'/api/removeAddress',
+            data:{
+              a_id:this.address[index].id,
+              u_id:this.address[index].u_id
+            }
+          }).then(res=>{
+            if(res.data.error){
+              this.set('删除收货地址成功！');
+              this.address.splice(index,1);
+              this.$store.commit('removeAddress',this.address);
+              console.log(this.$store.state.address);
+            }
+          });
         },
         //下一步
         next(){
           switch (this.active) {
             case 1:
-              if(!this.address[this.radio]){
+              if(!this.address[this.radio] || !this.address.length){
                 this.error('您还未选择收货地址！');
                 return;
               }
@@ -1116,54 +1265,81 @@
                 background: 'rgba(0, 0, 0, 0.7)'
               });
               setTimeout(() => {
+                //查询水果库存
                 this.$axios({
                   method:'post',
-                  url:'/api/payMoney',
+                  url:'/api/getShoppingNum',
                   data:{
-                    password:this.inputPayPass,
-                    u_id:this.userInfo.u_id
+                    goods:this.shoppingList,
                   }
                 }).then(res=>{
                   if(res.data.error){
-                    //生成订单
-                    const oDate1=new Date();
-                    const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
-                    console.log(oDate);
                     this.$axios({
                       method:'post',
-                      url:'/api/pendingGoods',
+                      url:'/api/payMoney',
                       data:{
-                        goods:this.shoppingList,
+                        password:this.inputPayPass,
                         u_id:this.userInfo.u_id,
-                        time:oDate
+                        money:this.total
                       }
                     }).then(res=>{
                       if(res.data.error){
-                        //支付成功
+                        //生成订单
+                        const oDate1=new Date();
+                        const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+                        console.log(oDate);
+                        this.$axios({
+                          method:'post',
+                          url:'/api/pendingGoods',
+                          data:{
+                            goods:this.shoppingList,
+                            u_id:this.userInfo.u_id,
+                            time:oDate,
+                            a_id:this.address[this.radio].id
+                          }
+                        }).then(res=>{
+                          if(res.data.error){
+                            //更新商品库存
+                            this.$axios({
+                              method:'post',
+                              url:'/api/setShoppingInfo',
+                              data:{
+                                goods:this.shoppingList
+                              }
+                            }).then(res=>{
+                              if(res.data.error){
+                                loading.close();
+                                this.set('支付成功，请注意查收！');
+                                //清空购物车
+                                for(let j=0;j<this.shoppingList.length;j++){
+                                  for(let k=0;k<this.shoppingCart.length;k++){
+                                    if(this.shoppingList[j].id==this.shoppingCart[k].id){
+                                      this.shoppingCart.splice(k,1);
+                                    }
+                                  }
+                                }
+                                this.receiptList.push(...this.shoppingList);//待收货
+                                this.pay=false;
+                                this.active=1;
+                                return;
+                              }
+                            });
+                          }
+                        });
+
+                      }else{
+                        //支付失败
                         loading.close();
-                        this.set('支付成功，请注意查收！');
+                        this.error('密码错误！');
+                        this.active--;
                       }
                     });
-                    //清空购物车
-                    for(let j=0;j<this.shoppingList.length;j++){
-                      for(let k=0;k<this.shoppingCart.length;k++){
-                        if(this.shoppingList[j].id==this.shoppingCart[k].id){
-                          this.shoppingCart.splice(k,1);
-                        }
-                      }
-                    }
-                    this.receiptList.push(...this.shoppingList);//待收货
-                    this.pay=false;
-                    this.active=1;
-                    return;
                   }else{
-                    //支付失败
                     loading.close();
-                    this.error('密码错误！');
+                    this.error('商品库存不够！');
                     this.active--;
                   }
                 });
-
               }, 2000);
               break;
           }
@@ -1216,21 +1392,69 @@
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             inputType:'password'
-          }).then(({ value }) => {
-            this.$message({
-              type: 'success',
-              message: '支付成功！ '
-            });
-                //删除待付款
-              for(let j=0;j<this.shoppingListPeding.length;j++){
-                for(let k=0;k<this.pendingPayment.length;k++){
-                  if(this.shoppingListPeding[j].id==this.pendingPayment[k].id){
-                    this.pendingPayment.splice(k,1);
-                  }
+          }).then(res1 => {
+            //判断商品数量
+              this.$axios({
+                method:'post',
+                url:'/api/getShoppingNum',
+                data:{
+                  goods:this.shoppingListPeding,
                 }
-              }
-              //添加到待收货
-              this.receiptList.push(...this.shoppingListPeding);
+              }).then(res=>{
+                if(res.data.error){
+                  //开始付款
+                  this.$axios({
+                    method:'post',
+                    url:'/api/payMoney',
+                    data:{
+                      password:res1.value,
+                      u_id:this.userInfo.u_id,
+                      money:this.totalPeding
+                    }
+                  }).then(res=>{
+                    if(res.data.error){
+                      this.$axios({
+                        method:'post',
+                        url:'/api/pendingGoodsL',
+                        data:{
+                          goods:this.shoppingListPeding,
+                          u_id:this.userInfo.u_id
+                        }
+                      }).then(res=>{
+                        if(res.data.error){
+                          //更改商品详情
+                          this.$axios({
+                            method:'post',
+                            url:'/api/setShoppingInfo',
+                            data:{
+                              goods:this.shoppingListPeding
+                            }
+                          }).then(res=>{
+                            if(res.data.error){
+                              this.$message({
+                                type: 'success',
+                                message: '支付成功！ '
+                              });
+                              //删除待付款
+                              for(let j=0;j<this.shoppingListPeding.length;j++){
+                                for(let k=0;k<this.pendingPayment.length;k++){
+                                  if(this.shoppingListPeding[j].id==this.pendingPayment[k].id){
+                                    this.pendingPayment.splice(k,1);
+                                  }
+                                }
+                              }
+                              //添加到待收货
+                              this.receiptList.push(...this.shoppingListPeding);
+                            }
+                          });
+                        }
+                      });
+                    }
+                  });
+                }else{
+                  this.error('商品库存不够！');
+                }
+              })
           }).catch(() => {
             this.$message({
               type: 'info',
@@ -1245,10 +1469,28 @@
         //提交评论
         release(){
           console.log(this.rate);
-          this.set('评价成功！');
-          this.discussShow=false;
-          this.assessList.splice(this.discussIndex,1);
-          this.discussIndex=-1;
+          console.log(this.discuss,this.textarea3);
+          const oDate1=new Date();
+          const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+          this.$axios({
+            method:'post',
+            url:'/api/evaluationProduct',
+            data:{
+              s_id:this.discuss.shopId,
+              u_id:this.userInfo.u_id,
+              content:this.textarea3,
+              time:oDate,
+              u_name:this.userInfo.u_name,
+              rate:''+this.rate.shop+this.rate.server+this.rate.goods
+            }
+          }).then(res=>{
+            if(res.data.error){
+              this.set('评价成功！');
+              this.discussShow=false;
+              this.assessList.splice(this.discussIndex,1);
+              this.discussIndex=-1;
+            }
+          });
         }
       }
     }
@@ -1259,6 +1501,9 @@
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+  .mai{
+    width: 100px;
   }
   .bottomBox{
     width: 100%;
@@ -1374,7 +1619,7 @@
           line-height: 36px;
           text-align: center;
           cursor: pointer;
-          margin-left: 220px;
+          margin-left: 173px;
         }
       }
       .orderContent{
