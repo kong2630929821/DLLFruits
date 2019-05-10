@@ -230,7 +230,7 @@ name:'ProductDetails',
   //立即购买
     buy(){
     console.log(this.detailInfo);
-     if(this.userInfo.u_id){
+     if(this.$store.state.userInfo.u_id){
        this.$axios({
          method:'post',
          url:'/api/getShoppingNums',

@@ -17,7 +17,7 @@
           <span>{{currentTopic.p_zan}}</span>
           <i class="fa fa-commenting-o"></i>
           <u>{{currentTopic.p_relay + currentTopic.p_discuss}}</u>
-          <em class="fa fa-trash-o"></em>
+          <em class="fa fa-trash-o" v-show="currentTopic.u_id==userInfo.u_id" @click="deleteTopic"></em>
         </div>
         <div class="cont">
           <div v-for="(v,index) in discussList" :key="index">
@@ -531,6 +531,33 @@
               }
             }
           })
+        },
+        //删除当前话题
+        deleteTopic(){
+          this.$confirm('此操作将永久删除该话题, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.$axios({
+              method:'post',
+              url:'/api/deleteTopic',
+              data:{
+                u_id:this.userInfo.u_id,
+                p_id:this.currentTopic.p_id
+              }
+            }).then(res=>{
+              if(res.data.error){
+                this.set('删除话题成功！');
+                this.$router.push({name:'community'});
+              }
+            })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
         },
         //收藏
         collect(){

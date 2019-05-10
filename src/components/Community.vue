@@ -60,7 +60,7 @@
               <span>{{v.p_zan}}</span>
               <i class="fa fa-commenting-o"></i>
               <u>{{v.p_discuss + v.p_relay}}</u>
-              <em class="fa fa-trash-o"></em>
+              <em class="fa fa-trash-o" v-show="v.u_id==userInfo.u_id"></em>
             </li>
           </ul>
           <ul class="list2">
@@ -74,7 +74,7 @@
               <span>{{v.p_zan}}</span>
               <i class="fa fa-commenting-o"></i>
               <u>{{v.p_discuss + v.p_relay}}</u>
-              <em class="fa fa-trash-o"></em>
+              <em class="fa fa-trash-o" v-show="v.u_id==userInfo.u_id"></em>
             </li>
           </ul>
           <ul class="list3">
@@ -88,7 +88,7 @@
               <span>{{v.p_zan}}</span>
               <i class="fa fa-commenting-o"></i>
               <u>{{v.p_discuss + v.p_relay}}</u>
-              <em class="fa fa-trash-o"></em>
+              <em class="fa fa-trash-o" v-show="v.u_id==userInfo.u_id"></em>
             </li>
           </ul>
         </div>
@@ -210,6 +210,13 @@
             type: 'success'
           });
         },
+        //错误提示
+        error(msg){
+          this.$message({
+            message:msg,
+            type:'error'
+          });
+        },
         //打开QQ表情
         openQQ(){
           this.isShow=!this.isShow;
@@ -288,69 +295,79 @@
         //发布
         release(){
           console.log(this.inputContent);
-          const oDate1=new Date();
-          const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
-          console.log(oDate);
-          const  name=[];
-          var formData=new FormData();
-          for(let i=0;i<this.input.length;i++){
-            formData.append('files',this.input[i]);
-            console.log(this.input[i].name);
-            name.push(this.input[i].name);
-          }
-          this.$axios({
-            method: 'post',
-            url:'/api/release',
-            data:{
-              id:this.$store.state.userInfo.u_id,
-              content:this.inputContent,
-              date:oDate,
-              src:name
+          //获取用户信息
+          this.userInfo=this.$store.state.userInfo;
+          if(this.userInfo.u_id){
+            const oDate1=new Date();
+            const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+            console.log(oDate);
+            const  name=[];
+            var formData=new FormData();
+            for(let i=0;i<this.input.length;i++){
+              formData.append('files',this.input[i]);
+              console.log(this.input[i].name);
+              name.push(this.input[i].name);
             }
-          }).then(res1=>{
-            console.log(res1);
-            const id=res1.data.id;
-            if(res1.data.error){
+            if(this.inputContent){
               this.$axios({
-                method:'post',
-                url:'/api/upload',
-                data:formData
-              }).then(res2=>{
-                if(!res2.data.error){
-                  this.set('发布成功！');
-                  this.imgShow = false;
-                  let data={
-                    p_id:id,
-                    p_content:this.inputContent,
-                    u_id:this.userInfo.u_id,
-                    p_zan:0,
-                    p_discuss:0,
-                    p_collect:0,
-                    p_relay:0,
-                    p_time:oDate,
-                    src:this.src[0]||""
-                  };
-                  const reg=/[[\u4e00-\u9fa5]+]/g;
-                  data.p_content=data.p_content.replace(reg,(word)=>{
-                    console.log(word);
-                    const str=word.substring(1,word.length-1);
-                    this.list.forEach(v=>{
-                      if(v.title==str){
-                        word=v.src
-                      }
-                    });
-                    return '<img src="'+word+'">'
-                  });
-                  console.log(data);
-                  console.log(this.listOne);
-                  this.listOne.push(data);
-                  this.inputContent='';
-                  this.isShow=false;
-                  this.imgShow=false;
+                method: 'post',
+                url:'/api/release',
+                data:{
+                  id:this.$store.state.userInfo.u_id,
+                  content:this.inputContent,
+                  date:oDate,
+                  src:name
+                }
+              }).then(res1=>{
+                console.log(res1);
+                const id=res1.data.id;
+                if(res1.data.error){
+                  this.$axios({
+                    method:'post',
+                    url:'/api/upload',
+                    data:formData
+                  }).then(res2=>{
+                    if(!res2.data.error){
+                      this.set('发布成功！');
+                      this.imgShow = false;
+                      let data={
+                        p_id:id,
+                        p_content:this.inputContent,
+                        u_id:this.userInfo.u_id,
+                        p_zan:0,
+                        p_discuss:0,
+                        p_collect:0,
+                        p_relay:0,
+                        p_time:oDate,
+                        src:this.src[0]||""
+                      };
+                      const reg=/[[\u4e00-\u9fa5]+]/g;
+                      data.p_content=data.p_content.replace(reg,(word)=>{
+                        console.log(word);
+                        const str=word.substring(1,word.length-1);
+                        this.list.forEach(v=>{
+                          if(v.title==str){
+                            word=v.src
+                          }
+                        });
+                        return '<img src="'+word+'">'
+                      });
+                      console.log(data);
+                      console.log(this.listOne);
+                      this.listOne.push(data);
+                      this.inputContent='';
+                      this.isShow=false;
+                      this.imgShow=false;
+                    }
+                  })
                 }
               })
+            }else{
+              this.error('你还未输入内容');
             }
-          })
+          }else{
+            this.error('你还没有登录！');
+          }
         },
         //点击进入详情
         currentList(currentIndex,j){
@@ -742,7 +759,7 @@
         }
         p{
           width: 100%;
-          height: 46px;
+          height: 41px;
           color: @fontColor;
           text-overflow: ellipsis;
           display: -webkit-box;
