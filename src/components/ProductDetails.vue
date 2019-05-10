@@ -21,6 +21,7 @@
           <img id="moveImg" :src="detailInfo.s_showMax[i]" :style="{left:moveX+'px',top:moveY+'px'}" alt="">
         </div>
         <p class="content-title">{{detailInfo.s_name}}</p>
+        <p class="s_info">{{detailInfo.s_info}}</p>
         <div class="content-info">
           <div class="content-info-top">此商品5月13开售，请提前加购</div>
           <ul>
@@ -229,62 +230,82 @@ name:'ProductDetails',
   //立即购买
     buy(){
     console.log(this.detailInfo);
-      this.$axios({
-        method:'post',
-        url:'/api/getShoppingNums',
-        data:{
-          goods:this.detailInfo,
-          num:this.sum
-        }
-      }).then(res=>{
-        if(res.data.error){
-          const oDate1=new Date();
-          const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
-          console.log(oDate);
-          this.$axios({
-            method:'post',
-            url:'/api/bugShopping',
-            data:{
-              s_id:this.detailInfo.s_id,
-              u_id:this.$store.state.userInfo.u_id,
-              o_time:oDate,
-              o_num:this.sum,
-              o_price:this.detailInfo.s_price
-            }
-          }).then(res=>{
-            if(res.data.error){
-              if(res.data.data){
-                this.$router.push({name:'myself',params:{index:1,id:res.data.data}});
-              }
-            }
-          })
-        }else{
-          this.error('商品库存不够！');
-        }
-      })
+     if(this.userInfo.u_id){
+       this.$axios({
+         method:'post',
+         url:'/api/getShoppingNums',
+         data:{
+           goods:this.detailInfo,
+           num:this.sum
+         }
+       }).then(res=>{
+         if(res.data.error){
+           const oDate1=new Date();
+           const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+           console.log(oDate);
+           this.$axios({
+             method:'post',
+             url:'/api/bugShopping',
+             data:{
+               s_id:this.detailInfo.s_id,
+               u_id:this.$store.state.userInfo.u_id,
+               o_time:oDate,
+               o_num:this.sum,
+               o_price:this.detailInfo.s_price
+             }
+           }).then(res=>{
+             if(res.data.error){
+               if(res.data.data){
+                 this.$router.push({name:'myself',params:{index:1,id:res.data.data}});
+               }
+             }
+           })
+         }else{
+           this.error('商品库存不够！');
+         }
+       })
+     }else{
+       this.error('请登录再试！');
+     }
     },
     //添加到购物车
     addShoppingCar(){
-      const oDate1=new Date();
-      const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
-      console.log(oDate);
-      this.$axios({
-        method:'post',
-        url:'/api/bugShopping',
-        data:{
-          s_id:this.detailInfo.s_id,
-          u_id:this.$store.state.userInfo.u_id,
-          o_time:oDate,
-          o_num:this.sum,
-          o_price:this.detailInfo.s_price
-        }
-      }).then(res=>{
-        if(res.data.error){
-          if(res.data.data){
-            this.set('添加购物车成功！');
-          }
-        }
-      })
+     if(this.userInfo.u_id){
+       const oDate1=new Date();
+       const oDate=oDate1.getFullYear()+'-'+(oDate1.getMonth()+1)+'-'+oDate1.getDate()+' '+oDate1.getHours()+':'+oDate1.getMinutes()+':'+oDate1.getSeconds();
+       console.log(oDate);
+       this.$axios({
+         method:'post',
+         url:'/api/bugShopping',
+         data:{
+           s_id:this.detailInfo.s_id,
+           u_id:this.$store.state.userInfo.u_id,
+           o_time:oDate,
+           o_num:this.sum,
+           o_price:this.detailInfo.s_price
+         }
+       }).then(res=>{
+         if(res.data.error){
+           if(res.data.data){
+             this.set('添加购物车成功！');
+             this.$axios({
+               method:'post',
+               url:'/api/setCollection',
+               data:{
+                 s_id:this.detailInfo.s_id
+               }
+             }).then(res=>{
+               if(res.data.error){
+                 console.log(this.detailInfo);
+                 this.detailInfo.s_love=this.detailInfo.s_love+1;
+               }
+             })
+           }
+         }
+       })
+     }else{
+       this.error('请登录再试！');
+     }
     }
 }
 }
@@ -298,6 +319,9 @@ name:'ProductDetails',
 }
 .isActive{
   background: #eee;
+}
+.s_info{
+  margin-left: 15px;
 }
 #moveLeft{
   width: 418px;

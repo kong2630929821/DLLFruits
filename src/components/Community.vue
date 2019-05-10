@@ -387,6 +387,7 @@
                 return '<img src="'+word+'">'
               });
             });
+            console.log('这是全部话题',this.topicList);
             this.listOne.push(this.topicList[0]);
             this.topicList.unshift();
             this.topicList.forEach(v=>{

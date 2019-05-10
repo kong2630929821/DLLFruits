@@ -27,9 +27,12 @@
           <div v-show="successLogin" class="userImg"  :style="{ 'background': 'url(' + user.u_img + ') no-repeat center center', 'background-size': '100% 100%'}"></div>
           <b>{{user.u_name?user.u_name:'我的账户'}}</b>
         </li>
+        <li @click="singOut" v-show="successLogin">
+          <span class="fa fa-sign-out"></span>
+        </li>
       </ol>
     </div>
-    <router-view/>
+    <router-view @updataInfo="changeInfo"/>
     <div class="login" v-show="login">
         <div class="loginBox clearfix">
             <div class="modal-content" @click="closeLogin">×</div>
@@ -229,8 +232,22 @@
              }
            }).then((res)=>{
              if(res.data.error){
-               console.log(res);
-               this.open2('登录成功！');
+               this.$axios({
+                 method:'post',
+                 url:'/api/phoneLogin',
+                 data:{
+                   phone:this.inputPhone
+                 }
+               }).then(res=>{
+                 if(res.data.error){
+                   this.open2('登入成功，欢迎进入果思！');
+                   this.successLogin=true;
+                   this.user=res.data.data[0];
+                   localStorage.setItem('userInfo',JSON.stringify(this.user));
+                   this.$store.commit('changeInfo',this.user);
+                   this.login = false;
+                 }
+               });
              }else{
                this.open3('手机号或验证码错误！');
              }
@@ -280,6 +297,17 @@
           }else{
             this.open3('请登录再试');
           }
+        },
+        //退出登录
+        singOut(){
+          this.$store.commit('changeInfo',{});
+          this.user={};
+          this.open2('成功退出果思系统！');
+          this.$router.push({name:'indexMain'});
+          this.successLogin=false;
+        },
+        changeInfo(val){
+          this.user=val;
         }
       },
       mounted(){

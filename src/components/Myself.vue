@@ -731,6 +731,10 @@
       mounted(){
           //获取用户信息
         this.userInfo=this.$store.state.userInfo;
+        if(!this.userInfo.u_id){
+          this.$router.push({name:'indexMain'});
+          return
+        }
         console.log(this.userInfo);
         //获取用户收货地址
         this.address=this.$store.state.address;
@@ -886,7 +890,7 @@
             gd.drawImage(oImg,l/sec.offsetWidth*oImg.naturalWidth,t/sec.offsetHeight*oImg.naturalHeight,hei,gao,0,0,150,150);
             var formData=new FormData();
             formData.append('files',oC.toDataURL());
-            formData.append('u_id',that.userInfo.id);
+            formData.append('u_id',that.userInfo.u_id);
             that.$axios({
               method:'post',
               url:'/api/uploads',
@@ -895,7 +899,9 @@
               if(res.data.error){
                 document.querySelector('.box1').style.display='none';
                 that.setImg();
-                that.userInfo.img=oC.toDataURL();
+                that.userInfo.u_img=oC.toDataURL();
+                that.$store.commit('changeInfo',that.userInfo);
+                that.$emit('updataInfo',that.userInfo);
                 oFile.value = '';
               }
             })
