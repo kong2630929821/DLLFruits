@@ -32,7 +32,8 @@
           <el-pagination
             background
             layout="prev, pager, next"
-            :total="100">
+            @current-change="checkPage"
+            :total="page">
           </el-pagination>
         </div>
       </div>
@@ -60,7 +61,9 @@
             i:0,
             items:['进口水果','国内水果','乳品糕点','方便速食','坚果专区','干货珍菌'],
             arr:['../../static/image/banner/banner1.jpg','../../static/image/banner/banner2.jpg','../../static/image/banner/banner3.jpg','../../static/image/banner/banner12.jpg','../../static/image/banner/banner5.jpg','../../static/image/banner/banner6.jpg'],
-            shopList:[]//水果列表
+            shopList:[],//水果列表当前
+            shopLists:[],//水果列表全部
+            page:10
           }
         },
         methods:{
@@ -76,6 +79,8 @@
               if(res.data.error){
                 let shopListData=res.data.data;
                 if(shopListData.length){
+                  //获取所有分页
+                  this.page=Math.ceil(shopListData.length/8)*10;
                   shopListData.forEach(v=>{
                     v.s_infoImg=v.s_infoImg.split('|');
                     v.s_minImg=v.s_minImg.split('|');
@@ -83,7 +88,8 @@
                     v.s_showMax=v.s_showMax.split('|');
                   });
                   console.log(shopListData);
-                  this.shopList=shopListData;
+                  this.shopLists=shopListData;
+                  this.shopList=shopListData.slice(0,8);
                   this.i = index;
                 }
               }
@@ -94,6 +100,11 @@
           productDetails(index){
             localStorage.setItem('currentShop',JSON.stringify(this.shopList[index]));
             this.$router.push({name:'productDetails',params:{data:this.shopList[index]}});
+          },
+          //点击分页
+          checkPage(val){
+            this.shopList=this.shopLists.slice((val-1)*8,8*val);
+            console.log(this.shopList);
           }
         },
       mounted(){
@@ -108,6 +119,8 @@
             if(res.data.error){
               let shopListData=res.data.data;
               if(shopListData.length){
+                //获取所有分页
+                this.page=Math.ceil(shopListData.length/8)*10;
                 shopListData.forEach(v=>{
                   v.s_infoImg=v.s_infoImg.split('|');
                   v.s_minImg=v.s_minImg.split('|');
@@ -115,7 +128,8 @@
                   v.s_showMax=v.s_showMax.split('|');
                 });
                 console.log(shopListData);
-                this.shopList=shopListData;
+                this.shopLists=shopListData;
+                this.shopList=shopListData.slice(0,8);
               }
             }
           })

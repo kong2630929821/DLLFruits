@@ -245,6 +245,7 @@
               <el-input
                 placeholder="请输入密码"
                 :disabled="edit"
+                type="password"
                 v-model="inputPass"
                 clearable>
               </el-input>
@@ -254,13 +255,14 @@
               <el-input
                 placeholder="请再次输入密码"
                 v-model="inputOkPass"
+                type="password"
                 :disabled="edit"
                 clearable>
               </el-input>
             </div>
             <div class="input1">
               <p>手机号码：</p>
-              <div class="code" @click="verification">{{countdown}}</div>
+              <!--<div class="code" @click="verification">{{countdown}}</div>-->
               <el-input
                 placeholder="请输入手机号码"
                 v-model="userInfo.u_phone"
@@ -268,15 +270,15 @@
                 clearable>
               </el-input>
             </div>
-            <div class="input1">
-              <p>验证码：</p>
-              <el-input
-                placeholder="请输入验证码"
-                v-model="inputCode"
-                :disabled="edit"
-                clearable>
-              </el-input>
-            </div>
+            <!--<div class="input1">-->
+              <!--<p>验证码：</p>-->
+              <!--<el-input-->
+                <!--placeholder="请输入验证码"-->
+                <!--v-model="inputCode"-->
+                <!--:disabled="edit"-->
+                <!--clearable>-->
+              <!--</el-input>-->
+            <!--</div>-->
             <div class="input1">
                 <div class="checkSex">
                   <el-radio v-model="userInfo.u_sex" :disabled="edit" label="男">男</el-radio>
@@ -294,7 +296,7 @@
             </div>
             <el-row>
               <el-button type="primary" round @click="openEdit">编辑资料</el-button>
-              <el-button type="primary" round @click="revise">修改资料</el-button>
+              <el-button type="primary" round @click="changeInfos">修改资料</el-button>
             </el-row>
           </div>
           <!--购物车-->
@@ -765,7 +767,11 @@
               };
               dataList.push(address);
             });
+            console.log(dataList);
+            // this.$store.commit('addAddress',dataList);
             localStorage.setItem('address',JSON.stringify(dataList));
+          }else{
+
           }
         });
         //获取所有购物车数据
@@ -954,7 +960,7 @@
               method:'post',
               url:'/api/getCode',
               data:{
-                phone:this.userInfo.phone
+                phone:this.userInfo.u_phone
               }
             });
             this.countdown = 60;
@@ -969,16 +975,18 @@
           }
         },
         //修改资料
-        revise(){
+        changeInfos(){
+            console.log(this.userInfo);
+            let userss=this.userInfo;
             this.$axios({
               method: 'post',
               url:'/api/changeUserInfo',
               data:{
-                phone:this.userInfo.phone,
-                code:this.inputCode,
-                userInfo:this.userInfo
+                pass:this.inputPass,
+                userInfo:userss
               }
             }).then((res)=>{
+              console.log('222222222222222',res);
               if(res.data.error){
                 this.set('修改资料成功！');
                 this.$store.commit('changeInfo',this.userInfo);

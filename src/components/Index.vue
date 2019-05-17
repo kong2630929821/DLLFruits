@@ -246,6 +246,37 @@
                    localStorage.setItem('userInfo',JSON.stringify(this.user));
                    this.$store.commit('changeInfo',this.user);
                    this.login = false;
+                   this.$axios({
+                     method:'post',
+                     url:'/api/getAllAddress',
+                     data:{
+                       u_id:this.user.u_id
+                     }
+                   }).then(res=>{
+                     if(res.data.error){
+                       let addressList=res.data.data;
+                       let dataList=[];
+                       addressList.forEach(v=>{
+                         let address={
+                           id:v.a_id,
+                           u_id:v.u_id,
+                           name:v.a_name,
+                           mail:v.a_mail,
+                           phone:v.a_phone,
+                           province:v.a_province,
+                           city:v.a_city,
+                           area:v.a_area,
+                           detailed:v.a_detailed
+                         };
+                         dataList.push(address);
+                       });
+                       console.log(dataList);
+                       // this.$store.commit('addAddress',dataList);
+                       localStorage.setItem('address',JSON.stringify(dataList));
+                     }else{
+
+                     }
+                   });
                  }
                });
              }else{
@@ -271,6 +302,40 @@
                     localStorage.setItem('userInfo',JSON.stringify(this.user));
                     this.$store.commit('changeInfo',this.user);
                     this.login = false;
+                    console.log('用户',this.user);
+                    this.$axios({
+                      method:'post',
+                      url:'/api/getAllAddress',
+                      data:{
+                        u_id:this.user.u_id
+                      }
+                    }).then(res=>{
+                      if(res.data.error){
+                        let addressList=res.data.data;
+                        let dataList=[];
+                        addressList.forEach(v=>{
+                          let address={
+                            id:v.a_id,
+                            u_id:v.u_id,
+                            name:v.a_name,
+                            mail:v.a_mail,
+                            phone:v.a_phone,
+                            province:v.a_province,
+                            city:v.a_city,
+                            area:v.a_area,
+                            detailed:v.a_detailed
+                          };
+                          dataList.push(address);
+                        });
+                        console.log(dataList);
+                        // this.$store.commit('addAddress',dataList);
+                        this.$store.commit('addAddress',dataList);
+                        console.log(this.$store);
+                        localStorage.setItem('address',JSON.stringify(dataList));
+                      }else{
+
+                      }
+                    });
                   }else{
                     this.open3('账号或密码错误，请重新登入！');
                     this.inputCode='';
@@ -487,7 +552,7 @@
     img{
       width: 78px;
       height: 50px;
-      margin-left: 152px;
+      margin-left: 37px;
       float: left;
     }
     p{

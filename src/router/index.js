@@ -17,8 +17,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      // redirect:'/index/indexMain'
-      redirect:'/index/information'
+      redirect:'/index/indexMain'
+      // redirect:'/index/information'
     },
     {
       path: '/index',

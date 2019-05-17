@@ -70,4 +70,7 @@ export default {
   .el-textarea__inner{
     resize: none;
   }
+  .el-pagination{
+    text-align: center;
+  }
 </style>
